@@ -55,14 +55,26 @@ namespace POETerminal1
 
         public void readFromSerial()
         {
+            //char[] myRead = new char[1];
+            char myRead;
             _canInvoke = false;
             while (serialPortCOM.BytesToRead > 0) {
-                serialBuffer += serialPortCOM.ReadExisting();
+                myRead = (char)serialPortCOM.ReadChar();
+                if (myRead == '\0') {
+                    textBoxOutput.AppendText("\r\n");
+                } else if (myRead == '\n') {
+                    textBoxOutput.AppendText("\r\n");
+                }
+                else
+                {
+                    textBoxOutput.AppendText(myRead.ToString());
+                }
+                //serialBuffer += serialPortCOM.ReadExisting();
             }
-            serialBuffer = serialBuffer.Replace("\r\n", "\n");
-            serialBuffer = serialBuffer.Replace("\n", "\r\n");
-            textBoxOutput.AppendText(serialBuffer);
-            serialBuffer = "";
+            //serialBuffer = serialBuffer.Replace("\r\n", "\n");
+            //serialBuffer = serialBuffer.Replace("\n", "\r\n");
+            //textBoxOutput.AppendText(serialBuffer);
+            //serialBuffer = "";
             _canInvoke = true;
         }
 
