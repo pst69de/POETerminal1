@@ -11,6 +11,8 @@ Installation hints
 Source directory of a typical Visual C# project.
 
 Add a personal key file (*.snk, exclude for GIT) to your project, before you compile a transferable release.
+Exclude this file from being taken into the repository.
+Also exclude the bin and obj subdirectories of the POETerminal1 subdirectory and the binary .suo-Files created by Visual Studio.
 
 ****************************************
 Casual files
