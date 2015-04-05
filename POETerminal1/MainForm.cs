@@ -15,6 +15,7 @@ namespace POETerminal1
         public readSerial readLines;
         private bool _canInvoke = true;
         public string serialBuffer;
+        public string ownLF = "\n";
 
         public MainForm()
         {
@@ -28,7 +29,6 @@ namespace POETerminal1
             foreach (string serPort in portNames) {
                 comboBoxCOM.Items.Add(serPort);
             }
-            comboBoxLF.SelectedIndex = 0;
             buttonDisconnect.Enabled = false;
         }
 
@@ -64,9 +64,7 @@ namespace POETerminal1
                     textBoxOutput.AppendText("\r\n");
                 } else if (myRead == '\n') {
                     textBoxOutput.AppendText("\r\n");
-                }
-                else
-                {
+                } else {
                     textBoxOutput.AppendText(myRead.ToString());
                 }
                 //serialBuffer += serialPortCOM.ReadExisting();
@@ -88,10 +86,7 @@ namespace POETerminal1
 
         private void buttonEnter_Click(object sender, EventArgs e)
         {
-            string myLF;
-            if (comboBoxLF.SelectedItem.ToString().Equals("\\n")) { myLF = "\n"; } 
-            else { myLF = ""; }
-            serialPortCOM.Write(textBoxInput.Text + myLF);
+            serialPortCOM.Write(textBoxInput.Text + ownLF);
             textBoxInput.Text = "";
         }
 
@@ -105,12 +100,29 @@ namespace POETerminal1
         private void textBoxInput_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return) {
-                string myLF;
-                if (comboBoxLF.SelectedItem.ToString().Equals("\\n")) { myLF = "\n"; }
-                else { myLF = ""; }
-                serialPortCOM.Write(textBoxInput.Text + myLF);
+                serialPortCOM.Write(textBoxInput.Text + ownLF);
                 textBoxInput.Text = "";
             }
+        }
+
+        private void buttonBL_Click(object sender, EventArgs e)
+        {
+            serialPortCOM.Write("B" + ownLF);
+        }
+
+        private void buttonTime_Click(object sender, EventArgs e)
+        {
+            serialPortCOM.Write("U<time>" + DateTime.Now.ToLongTimeString() + "</time>" + ownLF);
+        }
+
+        private void buttonNet_Click(object sender, EventArgs e)
+        {
+            serialPortCOM.Write("U<net/>" + ownLF);
+        }
+
+        private void buttonNode_Click(object sender, EventArgs e)
+        {
+            serialPortCOM.Write("U<node id=\"1\" />" + ownLF);
         }
     }
 }

@@ -44,12 +44,17 @@
             this.comboBoxCOM = new System.Windows.Forms.ComboBox();
             this.panelGraf = new System.Windows.Forms.Panel();
             this.serialPortCOM = new System.IO.Ports.SerialPort(this.components);
-            this.comboBoxLF = new System.Windows.Forms.ComboBox();
+            this.treeViewNet = new System.Windows.Forms.TreeView();
+            this.buttonBL = new System.Windows.Forms.Button();
+            this.buttonTime = new System.Windows.Forms.Button();
+            this.buttonNet = new System.Windows.Forms.Button();
+            this.buttonNode = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panelConnect.SuspendLayout();
+            this.panelGraf.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -66,12 +71,15 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panelGraf);
             this.splitContainer1.Size = new System.Drawing.Size(838, 478);
-            this.splitContainer1.SplitterDistance = 400;
+            this.splitContainer1.SplitterDistance = 399;
             this.splitContainer1.TabIndex = 0;
             // 
             // panelConnect
             // 
-            this.panelConnect.Controls.Add(this.comboBoxLF);
+            this.panelConnect.Controls.Add(this.buttonNode);
+            this.panelConnect.Controls.Add(this.buttonNet);
+            this.panelConnect.Controls.Add(this.buttonTime);
+            this.panelConnect.Controls.Add(this.buttonBL);
             this.panelConnect.Controls.Add(this.textBoxOutput);
             this.panelConnect.Controls.Add(this.label2);
             this.panelConnect.Controls.Add(this.buttonEnter);
@@ -86,7 +94,7 @@
             this.panelConnect.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelConnect.Location = new System.Drawing.Point(0, 0);
             this.panelConnect.Name = "panelConnect";
-            this.panelConnect.Size = new System.Drawing.Size(400, 478);
+            this.panelConnect.Size = new System.Drawing.Size(399, 478);
             this.panelConnect.TabIndex = 0;
             // 
             // textBoxOutput
@@ -94,18 +102,18 @@
             this.textBoxOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxOutput.Location = new System.Drawing.Point(12, 117);
+            this.textBoxOutput.Location = new System.Drawing.Point(12, 176);
             this.textBoxOutput.Multiline = true;
             this.textBoxOutput.Name = "textBoxOutput";
             this.textBoxOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxOutput.Size = new System.Drawing.Size(385, 349);
+            this.textBoxOutput.Size = new System.Drawing.Size(384, 290);
             this.textBoxOutput.TabIndex = 10;
             this.textBoxOutput.WordWrap = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 101);
+            this.label2.Location = new System.Drawing.Point(12, 159);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(24, 13);
             this.label2.TabIndex = 9;
@@ -114,7 +122,7 @@
             // buttonEnter
             // 
             this.buttonEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonEnter.Location = new System.Drawing.Point(317, 78);
+            this.buttonEnter.Location = new System.Drawing.Point(316, 136);
             this.buttonEnter.Name = "buttonEnter";
             this.buttonEnter.Size = new System.Drawing.Size(80, 21);
             this.buttonEnter.TabIndex = 8;
@@ -127,16 +135,16 @@
             this.textBoxInput.AcceptsReturn = true;
             this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxInput.Location = new System.Drawing.Point(12, 78);
+            this.textBoxInput.Location = new System.Drawing.Point(12, 136);
             this.textBoxInput.Name = "textBoxInput";
-            this.textBoxInput.Size = new System.Drawing.Size(247, 20);
+            this.textBoxInput.Size = new System.Drawing.Size(298, 20);
             this.textBoxInput.TabIndex = 7;
             this.textBoxInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxInput_KeyUp);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 62);
+            this.label1.Location = new System.Drawing.Point(12, 120);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(16, 13);
             this.label1.TabIndex = 6;
@@ -145,7 +153,7 @@
             // buttonSelectFile
             // 
             this.buttonSelectFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectFile.Location = new System.Drawing.Point(317, 39);
+            this.buttonSelectFile.Location = new System.Drawing.Point(316, 39);
             this.buttonSelectFile.Name = "buttonSelectFile";
             this.buttonSelectFile.Size = new System.Drawing.Size(80, 21);
             this.buttonSelectFile.TabIndex = 5;
@@ -158,13 +166,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFile.Location = new System.Drawing.Point(12, 39);
             this.textBoxFile.Name = "textBoxFile";
-            this.textBoxFile.Size = new System.Drawing.Size(299, 20);
+            this.textBoxFile.Size = new System.Drawing.Size(298, 20);
             this.textBoxFile.TabIndex = 4;
             // 
             // buttonReset
             // 
             this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.Location = new System.Drawing.Point(357, 12);
+            this.buttonReset.Location = new System.Drawing.Point(356, 12);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(40, 21);
             this.buttonReset.TabIndex = 3;
@@ -175,7 +183,7 @@
             // buttonDisconnect
             // 
             this.buttonDisconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDisconnect.Location = new System.Drawing.Point(311, 12);
+            this.buttonDisconnect.Location = new System.Drawing.Point(310, 12);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(40, 21);
             this.buttonDisconnect.TabIndex = 2;
@@ -186,7 +194,7 @@
             // buttonConnnect
             // 
             this.buttonConnnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonConnnect.Location = new System.Drawing.Point(265, 12);
+            this.buttonConnnect.Location = new System.Drawing.Point(264, 12);
             this.buttonConnnect.Name = "buttonConnnect";
             this.buttonConnnect.Size = new System.Drawing.Size(40, 21);
             this.buttonConnnect.TabIndex = 1;
@@ -201,31 +209,69 @@
             this.comboBoxCOM.FormattingEnabled = true;
             this.comboBoxCOM.Location = new System.Drawing.Point(12, 12);
             this.comboBoxCOM.Name = "comboBoxCOM";
-            this.comboBoxCOM.Size = new System.Drawing.Size(247, 21);
+            this.comboBoxCOM.Size = new System.Drawing.Size(246, 21);
             this.comboBoxCOM.TabIndex = 0;
             // 
             // panelGraf
             // 
+            this.panelGraf.Controls.Add(this.treeViewNet);
             this.panelGraf.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraf.Location = new System.Drawing.Point(0, 0);
             this.panelGraf.Name = "panelGraf";
-            this.panelGraf.Size = new System.Drawing.Size(434, 478);
+            this.panelGraf.Size = new System.Drawing.Size(435, 478);
             this.panelGraf.TabIndex = 0;
             // 
             // serialPortCOM
             // 
             this.serialPortCOM.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPortCOM_DataReceived);
             // 
-            // comboBoxLF
+            // treeViewNet
             // 
-            this.comboBoxLF.FormattingEnabled = true;
-            this.comboBoxLF.Items.AddRange(new object[] {
-            "\\0",
-            "\\n"});
-            this.comboBoxLF.Location = new System.Drawing.Point(265, 77);
-            this.comboBoxLF.Name = "comboBoxLF";
-            this.comboBoxLF.Size = new System.Drawing.Size(40, 21);
-            this.comboBoxLF.TabIndex = 11;
+            this.treeViewNet.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewNet.Location = new System.Drawing.Point(0, 0);
+            this.treeViewNet.Name = "treeViewNet";
+            this.treeViewNet.Size = new System.Drawing.Size(435, 478);
+            this.treeViewNet.TabIndex = 0;
+            // 
+            // buttonBL
+            // 
+            this.buttonBL.Location = new System.Drawing.Point(12, 65);
+            this.buttonBL.Name = "buttonBL";
+            this.buttonBL.Size = new System.Drawing.Size(80, 21);
+            this.buttonBL.TabIndex = 12;
+            this.buttonBL.Text = "BL";
+            this.buttonBL.UseVisualStyleBackColor = true;
+            this.buttonBL.Click += new System.EventHandler(this.buttonBL_Click);
+            // 
+            // buttonTime
+            // 
+            this.buttonTime.Location = new System.Drawing.Point(98, 65);
+            this.buttonTime.Name = "buttonTime";
+            this.buttonTime.Size = new System.Drawing.Size(80, 21);
+            this.buttonTime.TabIndex = 13;
+            this.buttonTime.Text = "time";
+            this.buttonTime.UseVisualStyleBackColor = true;
+            this.buttonTime.Click += new System.EventHandler(this.buttonTime_Click);
+            // 
+            // buttonNet
+            // 
+            this.buttonNet.Location = new System.Drawing.Point(184, 65);
+            this.buttonNet.Name = "buttonNet";
+            this.buttonNet.Size = new System.Drawing.Size(80, 21);
+            this.buttonNet.TabIndex = 14;
+            this.buttonNet.Text = "net";
+            this.buttonNet.UseVisualStyleBackColor = true;
+            this.buttonNet.Click += new System.EventHandler(this.buttonNet_Click);
+            // 
+            // buttonNode
+            // 
+            this.buttonNode.Location = new System.Drawing.Point(270, 66);
+            this.buttonNode.Name = "buttonNode";
+            this.buttonNode.Size = new System.Drawing.Size(80, 21);
+            this.buttonNode.TabIndex = 15;
+            this.buttonNode.Text = "node";
+            this.buttonNode.UseVisualStyleBackColor = true;
+            this.buttonNode.Click += new System.EventHandler(this.buttonNode_Click);
             // 
             // MainForm
             // 
@@ -243,6 +289,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.panelConnect.ResumeLayout(false);
             this.panelConnect.PerformLayout();
+            this.panelGraf.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -264,7 +311,11 @@
         private System.Windows.Forms.Button buttonSelectFile;
         private System.Windows.Forms.TextBox textBoxFile;
         private System.IO.Ports.SerialPort serialPortCOM;
-        private System.Windows.Forms.ComboBox comboBoxLF;
+        private System.Windows.Forms.TreeView treeViewNet;
+        private System.Windows.Forms.Button buttonNode;
+        private System.Windows.Forms.Button buttonNet;
+        private System.Windows.Forms.Button buttonTime;
+        private System.Windows.Forms.Button buttonBL;
     }
 }
 
