@@ -16,7 +16,7 @@ namespace POETerminal1
         public readSerial readLines;
         private bool _canInvoke = true;
         public string serialBuffer;
-        public string ownLF = "\n";
+        public string ownLF = "\n\0";
 
         public MainForm() {
             InitializeComponent();
@@ -33,6 +33,8 @@ namespace POETerminal1
 
         private void buttonConnnect_Click(object sender, EventArgs e) {
             serialPortCOM.PortName = comboBoxCOM.SelectedItem.ToString();
+            serialPortCOM.NewLine = "\f";
+            serialPortCOM.DiscardNull = false;
             serialPortCOM.Open();
             buttonDisconnect.Enabled = true;
             buttonConnnect.Enabled = false;
@@ -54,6 +56,7 @@ namespace POETerminal1
                 serialBuffer = serialBuffer.Substring(1);
                 XmlDocument myMessage = new XmlDocument();
                 XmlNodeList myNodes;
+                string myNodeId;
                 bool readable = true;
                 try {
                     myMessage.LoadXml(serialBuffer);
@@ -67,11 +70,12 @@ namespace POETerminal1
                             // bring node listing to treeViewNet
                             treeViewNet.BeginUpdate();
                             treeViewNet.Nodes.Clear();
-                            TreeNode myTreeNet = treeViewNet.Nodes.Add("<net/>");
-                            myNodes = myMessage.SelectNodes("node");
+                            TreeNode myTreeNet = treeViewNet.Nodes.Add("<net/>", "<net/>");
+                            myNodes = myMessage.DocumentElement.SelectNodes("node");
                             foreach (XmlNode aNode in myNodes) {
                                 XmlElement myNetNode = (XmlElement)aNode;
-                                TreeNode myTreeNetNode = myTreeNet.Nodes.Add("id='" + myNetNode.GetAttribute("id") + "'", "<node/>");
+                                myNodeId = "<node id=\"" + myNetNode.GetAttribute("id") + "\" />";
+                                TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, "<node/>");
                                 myTreeNetNode.Nodes.Add("id='" + myNetNode.GetAttribute("id") + "'");
                                 myTreeNetNode.Nodes.Add("name='" + myNetNode.GetAttribute("name") + "'");
                             }
@@ -80,12 +84,16 @@ namespace POETerminal1
                         case "node":
                             // bring sensor/actor listing to "node"-Node of treeViewNet
                             treeViewNet.BeginUpdate();
-                            string myNodeId = "id='" + myMessage.DocumentElement.GetAttribute("id") + "'";
+                            myNodeId = "<node id=\"" + myMessage.DocumentElement.GetAttribute("id") + "\" />";
                             TreeNode[] myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
                             if (myTreeNodes.Count() > 0) {
-                                myNodes = myMessage.SelectNodes("node/*");
+                                myNodes = myMessage.DocumentElement.SelectNodes("analog|digital|switch|pwm");
                                 foreach (XmlNode aNode in myNodes) {
-                                    myTreeNodes[0].Nodes.Add(aNode.InnerXml);
+                                    XmlElement myElement = (XmlElement)aNode;
+                                    myNodeId = "<" + myElement.Name
+                                             + " node=\"" + myMessage.DocumentElement.GetAttribute("id")
+                                             + "\" id=\"" + myElement.GetAttribute("id") + "\" />";
+                                    myTreeNodes[0].Nodes.Add(myNodeId, aNode.OuterXml);
                                 }
                             }
                             treeViewNet.EndUpdate();
@@ -97,7 +105,9 @@ namespace POETerminal1
                 }
                 // clear anyway
                 serialBuffer = "";
-            } else {
+            }
+            else
+            {
                 // some sort of secondary messaging, 
                 // should already be placed in textBoxOutput
                 // -> clear buffer
@@ -106,21 +116,35 @@ namespace POETerminal1
         }
 
         public void readFromSerial() {
-            //char[] myRead = new char[1];
-            char myRead;
+            char[] myRead = new char[1024];
+            //char myRead;
             _canInvoke = false;
             while (serialPortCOM.BytesToRead > 0) {
-                myRead = (char)serialPortCOM.ReadChar();
-                if (myRead == '\0') {
-                    textBoxOutput.AppendText("\r\n");
-                    interpretSerial();
-                } else if (myRead == '\n') {
-                    textBoxOutput.AppendText("\r\n");
-                    interpretSerial();
-                } else {
-                    textBoxOutput.AppendText(myRead.ToString());
+                // serialPort swallows newline, use ReadLine() instead  
+                //myRead = (char)serialPortCOM.ReadChar();
+                //myRead = (char)serialPortCOM.ReadByte();
+                int haveRead = serialPortCOM.Read(myRead, 0, 1024);
+                for (int cnt = 0; cnt < haveRead; cnt++) {
+                    if (myRead[cnt] == '\0')
+                    {
+                        textBoxOutput.AppendText("\r\n");
+                        interpretSerial();
+                    }
+                    else if (myRead[cnt] == '\n')
+                    {
+                        textBoxOutput.AppendText("\r\n");
+                        interpretSerial();
+                    }
+                    else
+                    {
+                        textBoxOutput.AppendText(myRead[cnt].ToString());
+                        serialBuffer += myRead[cnt];
+                    }
                 }
-                serialBuffer += myRead;
+                //*/
+                //serialBuffer = serialPortCOM.ReadLine();
+                //textBoxOutput.AppendText(serialBuffer + "\r\n");
+                //interpretSerial();
             }
             _canInvoke = true;
         }
@@ -163,7 +187,14 @@ namespace POETerminal1
         }
 
         private void buttonNode_Click(object sender, EventArgs e) {
-            serialPortCOM.Write("U<node id=\"1\" />" + ownLF);
+            string myMessage = "U<node id=\"1\" />" + ownLF;
+            serialPortCOM.Write(myMessage);
+        }
+
+        private void treeViewNet_DoubleClick(object sender, EventArgs e)
+        {
+            string myMessage = "U" + treeViewNet.SelectedNode.Name + ownLF;
+            serialPortCOM.Write(myMessage);
         }
     }
 }

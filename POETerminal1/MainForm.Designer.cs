@@ -31,6 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panelConnect = new System.Windows.Forms.Panel();
+            this.buttonNode = new System.Windows.Forms.Button();
+            this.buttonNet = new System.Windows.Forms.Button();
+            this.buttonTime = new System.Windows.Forms.Button();
+            this.buttonBL = new System.Windows.Forms.Button();
             this.textBoxOutput = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonEnter = new System.Windows.Forms.Button();
@@ -43,12 +47,8 @@
             this.buttonConnnect = new System.Windows.Forms.Button();
             this.comboBoxCOM = new System.Windows.Forms.ComboBox();
             this.panelGraf = new System.Windows.Forms.Panel();
-            this.serialPortCOM = new System.IO.Ports.SerialPort(this.components);
             this.treeViewNet = new System.Windows.Forms.TreeView();
-            this.buttonBL = new System.Windows.Forms.Button();
-            this.buttonTime = new System.Windows.Forms.Button();
-            this.buttonNet = new System.Windows.Forms.Button();
-            this.buttonNode = new System.Windows.Forms.Button();
+            this.serialPortCOM = new System.IO.Ports.SerialPort(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -96,6 +96,46 @@
             this.panelConnect.Name = "panelConnect";
             this.panelConnect.Size = new System.Drawing.Size(399, 478);
             this.panelConnect.TabIndex = 0;
+            // 
+            // buttonNode
+            // 
+            this.buttonNode.Location = new System.Drawing.Point(270, 66);
+            this.buttonNode.Name = "buttonNode";
+            this.buttonNode.Size = new System.Drawing.Size(80, 21);
+            this.buttonNode.TabIndex = 15;
+            this.buttonNode.Text = "node";
+            this.buttonNode.UseVisualStyleBackColor = true;
+            this.buttonNode.Click += new System.EventHandler(this.buttonNode_Click);
+            // 
+            // buttonNet
+            // 
+            this.buttonNet.Location = new System.Drawing.Point(184, 65);
+            this.buttonNet.Name = "buttonNet";
+            this.buttonNet.Size = new System.Drawing.Size(80, 21);
+            this.buttonNet.TabIndex = 14;
+            this.buttonNet.Text = "net";
+            this.buttonNet.UseVisualStyleBackColor = true;
+            this.buttonNet.Click += new System.EventHandler(this.buttonNet_Click);
+            // 
+            // buttonTime
+            // 
+            this.buttonTime.Location = new System.Drawing.Point(98, 65);
+            this.buttonTime.Name = "buttonTime";
+            this.buttonTime.Size = new System.Drawing.Size(80, 21);
+            this.buttonTime.TabIndex = 13;
+            this.buttonTime.Text = "time";
+            this.buttonTime.UseVisualStyleBackColor = true;
+            this.buttonTime.Click += new System.EventHandler(this.buttonTime_Click);
+            // 
+            // buttonBL
+            // 
+            this.buttonBL.Location = new System.Drawing.Point(12, 65);
+            this.buttonBL.Name = "buttonBL";
+            this.buttonBL.Size = new System.Drawing.Size(80, 21);
+            this.buttonBL.TabIndex = 12;
+            this.buttonBL.Text = "BL";
+            this.buttonBL.UseVisualStyleBackColor = true;
+            this.buttonBL.Click += new System.EventHandler(this.buttonBL_Click);
             // 
             // textBoxOutput
             // 
@@ -221,10 +261,6 @@
             this.panelGraf.Size = new System.Drawing.Size(435, 478);
             this.panelGraf.TabIndex = 0;
             // 
-            // serialPortCOM
-            // 
-            this.serialPortCOM.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPortCOM_DataReceived);
-            // 
             // treeViewNet
             // 
             this.treeViewNet.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -232,46 +268,11 @@
             this.treeViewNet.Name = "treeViewNet";
             this.treeViewNet.Size = new System.Drawing.Size(435, 478);
             this.treeViewNet.TabIndex = 0;
+            this.treeViewNet.DoubleClick += new System.EventHandler(this.treeViewNet_DoubleClick);
             // 
-            // buttonBL
+            // serialPortCOM
             // 
-            this.buttonBL.Location = new System.Drawing.Point(12, 65);
-            this.buttonBL.Name = "buttonBL";
-            this.buttonBL.Size = new System.Drawing.Size(80, 21);
-            this.buttonBL.TabIndex = 12;
-            this.buttonBL.Text = "BL";
-            this.buttonBL.UseVisualStyleBackColor = true;
-            this.buttonBL.Click += new System.EventHandler(this.buttonBL_Click);
-            // 
-            // buttonTime
-            // 
-            this.buttonTime.Location = new System.Drawing.Point(98, 65);
-            this.buttonTime.Name = "buttonTime";
-            this.buttonTime.Size = new System.Drawing.Size(80, 21);
-            this.buttonTime.TabIndex = 13;
-            this.buttonTime.Text = "time";
-            this.buttonTime.UseVisualStyleBackColor = true;
-            this.buttonTime.Click += new System.EventHandler(this.buttonTime_Click);
-            // 
-            // buttonNet
-            // 
-            this.buttonNet.Location = new System.Drawing.Point(184, 65);
-            this.buttonNet.Name = "buttonNet";
-            this.buttonNet.Size = new System.Drawing.Size(80, 21);
-            this.buttonNet.TabIndex = 14;
-            this.buttonNet.Text = "net";
-            this.buttonNet.UseVisualStyleBackColor = true;
-            this.buttonNet.Click += new System.EventHandler(this.buttonNet_Click);
-            // 
-            // buttonNode
-            // 
-            this.buttonNode.Location = new System.Drawing.Point(270, 66);
-            this.buttonNode.Name = "buttonNode";
-            this.buttonNode.Size = new System.Drawing.Size(80, 21);
-            this.buttonNode.TabIndex = 15;
-            this.buttonNode.Text = "node";
-            this.buttonNode.UseVisualStyleBackColor = true;
-            this.buttonNode.Click += new System.EventHandler(this.buttonNode_Click);
+            this.serialPortCOM.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPortCOM_DataReceived);
             // 
             // MainForm
             // 
