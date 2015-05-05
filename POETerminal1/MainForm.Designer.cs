@@ -54,7 +54,6 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panelConnect.SuspendLayout();
-            this.panelGraf.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -76,6 +75,7 @@
             // 
             // panelConnect
             // 
+            this.panelConnect.Controls.Add(this.treeViewNet);
             this.panelConnect.Controls.Add(this.buttonNode);
             this.panelConnect.Controls.Add(this.buttonNet);
             this.panelConnect.Controls.Add(this.buttonTime);
@@ -142,18 +142,18 @@
             this.textBoxOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxOutput.Location = new System.Drawing.Point(12, 176);
+            this.textBoxOutput.Location = new System.Drawing.Point(12, 308);
             this.textBoxOutput.Multiline = true;
             this.textBoxOutput.Name = "textBoxOutput";
             this.textBoxOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxOutput.Size = new System.Drawing.Size(384, 290);
+            this.textBoxOutput.Size = new System.Drawing.Size(384, 158);
             this.textBoxOutput.TabIndex = 10;
             this.textBoxOutput.WordWrap = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 159);
+            this.label2.Location = new System.Drawing.Point(12, 291);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(24, 13);
             this.label2.TabIndex = 9;
@@ -162,7 +162,7 @@
             // buttonEnter
             // 
             this.buttonEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonEnter.Location = new System.Drawing.Point(316, 136);
+            this.buttonEnter.Location = new System.Drawing.Point(316, 268);
             this.buttonEnter.Name = "buttonEnter";
             this.buttonEnter.Size = new System.Drawing.Size(80, 21);
             this.buttonEnter.TabIndex = 8;
@@ -175,7 +175,7 @@
             this.textBoxInput.AcceptsReturn = true;
             this.textBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxInput.Location = new System.Drawing.Point(12, 136);
+            this.textBoxInput.Location = new System.Drawing.Point(12, 268);
             this.textBoxInput.Name = "textBoxInput";
             this.textBoxInput.Size = new System.Drawing.Size(298, 20);
             this.textBoxInput.TabIndex = 7;
@@ -184,7 +184,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 120);
+            this.label1.Location = new System.Drawing.Point(12, 252);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(16, 13);
             this.label1.TabIndex = 6;
@@ -254,7 +254,6 @@
             // 
             // panelGraf
             // 
-            this.panelGraf.Controls.Add(this.treeViewNet);
             this.panelGraf.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraf.Location = new System.Drawing.Point(0, 0);
             this.panelGraf.Name = "panelGraf";
@@ -263,10 +262,11 @@
             // 
             // treeViewNet
             // 
-            this.treeViewNet.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewNet.Location = new System.Drawing.Point(0, 0);
+            this.treeViewNet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewNet.Location = new System.Drawing.Point(12, 92);
             this.treeViewNet.Name = "treeViewNet";
-            this.treeViewNet.Size = new System.Drawing.Size(435, 478);
+            this.treeViewNet.Size = new System.Drawing.Size(382, 155);
             this.treeViewNet.TabIndex = 0;
             this.treeViewNet.DoubleClick += new System.EventHandler(this.treeViewNet_DoubleClick);
             // 
@@ -290,7 +290,6 @@
             this.splitContainer1.ResumeLayout(false);
             this.panelConnect.ResumeLayout(false);
             this.panelConnect.PerformLayout();
-            this.panelGraf.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
