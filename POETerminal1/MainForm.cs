@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace POETerminal1
 {
@@ -17,6 +18,7 @@ namespace POETerminal1
         private bool _canInvoke = true;
         public string serialBuffer;
         public string ownLF = "\n\0";
+        public int seriesTick;
 
         public MainForm() {
             InitializeComponent();
@@ -38,12 +40,15 @@ namespace POETerminal1
             serialPortCOM.Open();
             buttonDisconnect.Enabled = true;
             buttonConnnect.Enabled = false;
+            seriesTick = 0;
         }
 
         private void buttonDisconnect_Click(object sender, EventArgs e) {
             serialPortCOM.Close();
             buttonConnnect.Enabled = true;
             buttonDisconnect.Enabled = false;
+            seriesTick = 0;
+            timerGraph.Enabled = false;
         }
 
         private void buttonReset_Click(object sender, EventArgs e) {
@@ -193,8 +198,52 @@ namespace POETerminal1
 
         private void treeViewNet_DoubleClick(object sender, EventArgs e)
         {
+            textBoxInput.Text = "U" + treeViewNet.SelectedNode.Name;
             string myMessage = "U" + treeViewNet.SelectedNode.Name + ownLF;
             serialPortCOM.Write(myMessage);
+        }
+
+        private void chartGraph_DragDrop(object sender, DragEventArgs e)
+        {
+            string mySeriesName = (String)e.Data.GetData("Text");
+            Series mySeries = new Series(mySeriesName);
+            mySeries.ChartType = SeriesChartType.FastLine;
+            mySeries.Legend = "Legend1";
+            mySeries.ChartArea = "ChartAreaGraph";
+            chartGraph.Series.Add(mySeries);
+            if (!timerGraph.Enabled) { timerGraph.Enabled = true; }
+        }
+
+        private void treeViewNet_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if ((e.Item) is TreeNode)
+            {
+                TreeNode myNode = (TreeNode)e.Item;
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    DoDragDrop(myNode.Name, DragDropEffects.Copy);
+                }
+            }
+        }
+
+        private void chartGraph_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("Text"))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void timerGraph_Tick(object sender, EventArgs e)
+        {
+            seriesTick++;
+            foreach (Series aSeries in chartGraph.Series)
+            {
+                string myMessage = "U" + aSeries.Name;
+                textBoxInput.Text = myMessage;
+                serialPortCOM.Write(myMessage + ownLF);
+                System.Threading.Thread.Sleep(500);
+            }
         }
     }
 }

@@ -29,8 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panelConnect = new System.Windows.Forms.Panel();
+            this.treeViewNet = new System.Windows.Forms.TreeView();
             this.buttonNode = new System.Windows.Forms.Button();
             this.buttonNet = new System.Windows.Forms.Button();
             this.buttonTime = new System.Windows.Forms.Button();
@@ -47,13 +50,16 @@
             this.buttonConnnect = new System.Windows.Forms.Button();
             this.comboBoxCOM = new System.Windows.Forms.ComboBox();
             this.panelGraf = new System.Windows.Forms.Panel();
-            this.treeViewNet = new System.Windows.Forms.TreeView();
+            this.chartGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.serialPortCOM = new System.IO.Ports.SerialPort(this.components);
+            this.timerGraph = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panelConnect.SuspendLayout();
+            this.panelGraf.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -96,6 +102,17 @@
             this.panelConnect.Name = "panelConnect";
             this.panelConnect.Size = new System.Drawing.Size(399, 478);
             this.panelConnect.TabIndex = 0;
+            // 
+            // treeViewNet
+            // 
+            this.treeViewNet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewNet.Location = new System.Drawing.Point(12, 92);
+            this.treeViewNet.Name = "treeViewNet";
+            this.treeViewNet.Size = new System.Drawing.Size(382, 155);
+            this.treeViewNet.TabIndex = 0;
+            this.treeViewNet.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeViewNet_ItemDrag);
+            this.treeViewNet.DoubleClick += new System.EventHandler(this.treeViewNet_DoubleClick);
             // 
             // buttonNode
             // 
@@ -254,25 +271,37 @@
             // 
             // panelGraf
             // 
+            this.panelGraf.Controls.Add(this.chartGraph);
             this.panelGraf.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraf.Location = new System.Drawing.Point(0, 0);
             this.panelGraf.Name = "panelGraf";
             this.panelGraf.Size = new System.Drawing.Size(435, 478);
             this.panelGraf.TabIndex = 0;
             // 
-            // treeViewNet
+            // chartGraph
             // 
-            this.treeViewNet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewNet.Location = new System.Drawing.Point(12, 92);
-            this.treeViewNet.Name = "treeViewNet";
-            this.treeViewNet.Size = new System.Drawing.Size(382, 155);
-            this.treeViewNet.TabIndex = 0;
-            this.treeViewNet.DoubleClick += new System.EventHandler(this.treeViewNet_DoubleClick);
+            this.chartGraph.AllowDrop = true;
+            chartArea2.Name = "ChartAreaGraph";
+            this.chartGraph.ChartAreas.Add(chartArea2);
+            this.chartGraph.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend2.Name = "Legend1";
+            this.chartGraph.Legends.Add(legend2);
+            this.chartGraph.Location = new System.Drawing.Point(0, 0);
+            this.chartGraph.Name = "chartGraph";
+            this.chartGraph.Size = new System.Drawing.Size(435, 478);
+            this.chartGraph.TabIndex = 0;
+            this.chartGraph.Text = "chart1";
+            this.chartGraph.DragDrop += new System.Windows.Forms.DragEventHandler(this.chartGraph_DragDrop);
+            this.chartGraph.DragEnter += new System.Windows.Forms.DragEventHandler(this.chartGraph_DragEnter);
             // 
             // serialPortCOM
             // 
             this.serialPortCOM.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPortCOM_DataReceived);
+            // 
+            // timerGraph
+            // 
+            this.timerGraph.Interval = 60000;
+            this.timerGraph.Tick += new System.EventHandler(this.timerGraph_Tick);
             // 
             // MainForm
             // 
@@ -290,6 +319,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.panelConnect.ResumeLayout(false);
             this.panelConnect.PerformLayout();
+            this.panelGraf.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chartGraph)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -316,6 +347,8 @@
         private System.Windows.Forms.Button buttonNet;
         private System.Windows.Forms.Button buttonTime;
         private System.Windows.Forms.Button buttonBL;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartGraph;
+        private System.Windows.Forms.Timer timerGraph;
     }
 }
 
