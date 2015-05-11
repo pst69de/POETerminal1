@@ -34,7 +34,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panelConnect = new System.Windows.Forms.Panel();
             this.treeViewNet = new System.Windows.Forms.TreeView();
-            this.buttonNode = new System.Windows.Forms.Button();
+            this.buttonTestNet = new System.Windows.Forms.Button();
             this.buttonNet = new System.Windows.Forms.Button();
             this.buttonTime = new System.Windows.Forms.Button();
             this.buttonBL = new System.Windows.Forms.Button();
@@ -82,7 +82,7 @@
             // panelConnect
             // 
             this.panelConnect.Controls.Add(this.treeViewNet);
-            this.panelConnect.Controls.Add(this.buttonNode);
+            this.panelConnect.Controls.Add(this.buttonTestNet);
             this.panelConnect.Controls.Add(this.buttonNet);
             this.panelConnect.Controls.Add(this.buttonTime);
             this.panelConnect.Controls.Add(this.buttonBL);
@@ -114,15 +114,15 @@
             this.treeViewNet.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeViewNet_ItemDrag);
             this.treeViewNet.DoubleClick += new System.EventHandler(this.treeViewNet_DoubleClick);
             // 
-            // buttonNode
+            // buttonTestNet
             // 
-            this.buttonNode.Location = new System.Drawing.Point(270, 66);
-            this.buttonNode.Name = "buttonNode";
-            this.buttonNode.Size = new System.Drawing.Size(80, 21);
-            this.buttonNode.TabIndex = 15;
-            this.buttonNode.Text = "node";
-            this.buttonNode.UseVisualStyleBackColor = true;
-            this.buttonNode.Click += new System.EventHandler(this.buttonNode_Click);
+            this.buttonTestNet.Location = new System.Drawing.Point(270, 66);
+            this.buttonTestNet.Name = "buttonTestNet";
+            this.buttonTestNet.Size = new System.Drawing.Size(80, 21);
+            this.buttonTestNet.TabIndex = 15;
+            this.buttonTestNet.Text = "test net";
+            this.buttonTestNet.UseVisualStyleBackColor = true;
+            this.buttonTestNet.Click += new System.EventHandler(this.buttonTestNet_Click);
             // 
             // buttonNet
             // 
@@ -343,7 +343,7 @@
         private System.Windows.Forms.TextBox textBoxFile;
         private System.IO.Ports.SerialPort serialPortCOM;
         private System.Windows.Forms.TreeView treeViewNet;
-        private System.Windows.Forms.Button buttonNode;
+        private System.Windows.Forms.Button buttonTestNet;
         private System.Windows.Forms.Button buttonNet;
         private System.Windows.Forms.Button buttonTime;
         private System.Windows.Forms.Button buttonBL;

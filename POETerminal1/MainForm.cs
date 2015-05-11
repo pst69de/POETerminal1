@@ -191,10 +191,12 @@ namespace POETerminal1
             serialPortCOM.Write("U<net/>" + ownLF);
         }
 
+        /* not needed anymore (direct access TreeView.DblClk)
         private void buttonNode_Click(object sender, EventArgs e) {
             string myMessage = "U<node id=\"1\" />" + ownLF;
             serialPortCOM.Write(myMessage);
         }
+        */
 
         private void treeViewNet_DoubleClick(object sender, EventArgs e)
         {
@@ -244,6 +246,43 @@ namespace POETerminal1
                 serialPortCOM.Write(myMessage + ownLF);
                 System.Threading.Thread.Sleep(500);
             }
+        }
+
+        private void buttonTestNet_Click(object sender, EventArgs e)
+        {
+            string myNodeId;
+            string mySensorActorId;
+            treeViewNet.BeginUpdate();
+            treeViewNet.Nodes.Clear();
+            TreeNode myTreeNet = treeViewNet.Nodes.Add("<net/>", "<net/>");
+            for (int cntNode = 1; cntNode < 4; cntNode++)
+            {
+                myNodeId = "<node id=\"" + cntNode.ToString() + "\" />";
+                TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, "<node/>");
+                myTreeNetNode.Nodes.Add("id='" + cntNode.ToString() + "'");
+                myTreeNetNode.Nodes.Add("name='" + cntNode.ToString("X4") + "'");
+                for (int cntAnalog = 1; cntAnalog < 5; cntAnalog++)
+                {
+                    mySensorActorId = "<analog node=\"" + cntNode.ToString() + "\" id=\"" + cntAnalog.ToString() + "\" />";
+                    myTreeNetNode.Nodes.Add(mySensorActorId, "<analog id=\"" + cntAnalog.ToString() + "\" value=\"" + cntNode.ToString() + "\" />");
+                }
+                for (int cntDigital = 1; cntDigital < 3; cntDigital++)
+                {
+                    mySensorActorId = "<digital node=\"" + cntNode.ToString() + "\" id=\"" + cntDigital.ToString() + "\" />";
+                    myTreeNetNode.Nodes.Add(mySensorActorId, "<digital id=\"" + cntDigital.ToString() + "\" value=\"0\" />");
+                }
+                for (int cntSwitch = 1; cntSwitch < 3; cntSwitch++)
+                {
+                    mySensorActorId = "<switch node=\"" + cntNode.ToString() + "\" id=\"" + cntSwitch.ToString() + "\" />";
+                    myTreeNetNode.Nodes.Add(mySensorActorId, "<switch id=\"" + cntSwitch.ToString() + "\" value=\"0\" />");
+                }
+                for (int cntPwm = 1; cntPwm < 3; cntPwm++)
+                {
+                    mySensorActorId = "<pwm node=\"" + cntNode.ToString() + "\" id=\"" + cntPwm.ToString() + "\" />";
+                    myTreeNetNode.Nodes.Add(mySensorActorId, "<pwm id=\"" + cntPwm.ToString() + "\" value=\"50\" />");
+                }
+            }
+            treeViewNet.EndUpdate();
         }
     }
 }
