@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +20,7 @@ namespace POETerminal1
         public string serialBuffer;
         public string ownLF = "\n\0";
         public int seriesTick;
+        private CultureInfo cult = new CultureInfo("en-US");
 
         public MainForm() {
             InitializeComponent();
@@ -102,6 +104,15 @@ namespace POETerminal1
                                 }
                             }
                             treeViewNet.EndUpdate();
+                            break;
+                        case "analog":
+                            string myNode = myMessage.DocumentElement.GetAttribute("node");
+                            string myId = myMessage.DocumentElement.GetAttribute("id");
+                            string mySeriesName = "<analog node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                            string myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                            double myDblValue;
+                            Double.TryParse(myStrValue,NumberStyles.AllowLeadingSign|NumberStyles.AllowDecimalPoint,cult,out myDblValue);
+                            chartGraph.Series[mySeriesName].Points.AddXY((double)seriesTick,myDblValue);
                             break;
                         default:
                             // non-usable message ... should be passed to first node again
