@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -299,9 +300,12 @@ namespace POETerminal1
             string mySeriesName = (String)e.Data.GetData("Text");
             Series mySeries = new Series(mySeriesName);
             mySeries.ChartType = SeriesChartType.FastLine;
+            mySeries.XValueType = ChartValueType.Time;
+            //mySeries.LabelFormat = 
             mySeries.Legend = "Legend1";
             mySeries.ChartArea = "ChartAreaGraph";
             chartGraph.Series.Add(mySeries);
+            chartGraph.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm";
             if (!timerGraph.Enabled) 
             {
                 // 200 ms means search Minute pass (seconds == 0)
@@ -368,20 +372,29 @@ namespace POETerminal1
             else
             {
                 tickTime = DateTime.Now;
+                if ((tickTime.Minute == 0) & (tickTime.Second == 0))
+                {
+                    // every hour send time sync
+                    //serialPortCOM.Write("U<time>" + DateTime.Now.ToLongTimeString() + "</time>" + ownLF);
+                    // store chartFiling
+                    if (textBoxFile.Text.Length > 0)
+                    {
+                        string myFileBase = Path.GetDirectoryName(textBoxFile.Text);
+                        if (Directory.Exists(myFileBase))
+                        {
+                            string myFileXmlName = Path.ChangeExtension(textBoxFile.Text, tickTime.ToString("yyyyMMddHHmm") + ".xml");
+                            string myFilePngName = Path.ChangeExtension(textBoxFile.Text, tickTime.ToString("yyyyMMddHHmm") + ".png");
+                            chartFiling.Save(myFileXmlName);
+                            Bitmap storeBitmap = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                            chartGraph.DrawToBitmap(storeBitmap, new Rectangle(0, 0, 1024, 1024));
+                            storeBitmap.Save(myFilePngName, ImageFormat.Png);
+                        }
+                    }
+                }
                 chartEntry = chartFiling.CreateElement("measure");
                 chartEntry.SetAttribute("date", DateTime.Now.ToString("yyyy-MM-dd"));
                 chartEntry.SetAttribute("time", DateTime.Now.ToString("HH:mm:ss"));
                 chartFiling.DocumentElement.AppendChild(chartEntry);
-                if (tickTime.Minute == 0 & tickTime.Second == 0)
-                {
-                    // every hour send time sync
-                    serialPortCOM.Write("U<time>" + DateTime.Now.ToLongTimeString() + "</time>" + ownLF);
-                    // store chartFiling
-                    if (Directory.Exists(Directory.GetParent(textBoxFile.Text).ToString()))
-                    {
-                        chartFiling.Save(textBoxFile.Text);
-                    }
-                }
                 foreach (Series aSeries in chartGraph.Series)
                 {
                     // as there maybe a time sync ahead wait before sending
