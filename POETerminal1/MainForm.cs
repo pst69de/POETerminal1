@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -67,6 +68,13 @@ namespace POETerminal1
                 XmlDocument myMessage = new XmlDocument();
                 XmlNodeList myNodes;
                 string myNodeId;
+                string myNode;
+                string myId;
+                string myStrValue;
+                double myDblValue;
+                string mySeriesName;
+
+                XmlElement measureEntry;
                 bool readable = true;
                 try {
                     myMessage.LoadXml(serialBuffer);
@@ -109,13 +117,80 @@ namespace POETerminal1
                             treeViewNet.EndUpdate();
                             break;
                         case "analog":
-                            string myNode = myMessage.DocumentElement.GetAttribute("node");
-                            string myId = myMessage.DocumentElement.GetAttribute("id");
-                            string mySeriesName = "<analog node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            string myStrValue = myMessage.DocumentElement.GetAttribute("value");
-                            double myDblValue;
-                            Double.TryParse(myStrValue,NumberStyles.AllowLeadingSign|NumberStyles.AllowDecimalPoint,cult,out myDblValue);
-                            chartGraph.Series[mySeriesName].Points.AddXY(tickTime,myDblValue);
+                            myNode = myMessage.DocumentElement.GetAttribute("node");
+                            myId = myMessage.DocumentElement.GetAttribute("id");
+                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                            mySeriesName = "<analog node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                            if (chartGraph.Series[mySeriesName] != null)
+                            {
+                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                if (chartEntry != null)
+                                {
+                                    measureEntry = chartFiling.CreateElement("analog");
+                                    measureEntry.SetAttribute("node", myNode);
+                                    measureEntry.SetAttribute("id", myId);
+                                    measureEntry.SetAttribute("value", myStrValue);
+                                    chartEntry.AppendChild(measureEntry);
+                                }
+                            }
+                            break;
+                        case "digital":
+                            myNode = myMessage.DocumentElement.GetAttribute("node");
+                            myId = myMessage.DocumentElement.GetAttribute("id");
+                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                            mySeriesName = "<digital node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                            if (chartGraph.Series[mySeriesName] != null)
+                            {
+                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                if (chartEntry != null)
+                                {
+                                    measureEntry = chartFiling.CreateElement("digital");
+                                    measureEntry.SetAttribute("node", myNode);
+                                    measureEntry.SetAttribute("id", myId);
+                                    measureEntry.SetAttribute("value", myStrValue);
+                                    chartEntry.AppendChild(measureEntry);
+                                }
+                            }
+                            break;
+                        case "switch":
+                            myNode = myMessage.DocumentElement.GetAttribute("node");
+                            myId = myMessage.DocumentElement.GetAttribute("id");
+                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                            mySeriesName = "<switch node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                            if (chartGraph.Series[mySeriesName] != null)
+                            {
+                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                if (chartEntry != null)
+                                {
+                                    measureEntry = chartFiling.CreateElement("switch");
+                                    measureEntry.SetAttribute("node", myNode);
+                                    measureEntry.SetAttribute("id", myId);
+                                    measureEntry.SetAttribute("value", myStrValue);
+                                    chartEntry.AppendChild(measureEntry);
+                                }
+                            }
+                            break;
+                        case "pwm":
+                            myNode = myMessage.DocumentElement.GetAttribute("node");
+                            myId = myMessage.DocumentElement.GetAttribute("id");
+                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                            mySeriesName = "<pwm node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                            if (chartGraph.Series[mySeriesName] != null)
+                            {
+                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                if (chartEntry != null)
+                                {
+                                    measureEntry = chartFiling.CreateElement("pwm");
+                                    measureEntry.SetAttribute("node", myNode);
+                                    measureEntry.SetAttribute("id", myId);
+                                    measureEntry.SetAttribute("value", myStrValue);
+                                    chartEntry.AppendChild(measureEntry);
+                                }
+                            }
                             break;
                         default:
                             // non-usable message ... should be passed to first node again
@@ -252,7 +327,27 @@ namespace POETerminal1
         {
             if (e.Data.GetDataPresent("Text"))
             {
-                e.Effect = DragDropEffects.Copy;
+                string mySeriesName = (String)e.Data.GetData("Text");
+                if (mySeriesName.StartsWith("<analog"))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+                else if (mySeriesName.StartsWith("<digital"))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+                else if (mySeriesName.StartsWith("<switch"))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+                else if (mySeriesName.StartsWith("<pwm"))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
+                }
             }
         }
 
@@ -274,15 +369,18 @@ namespace POETerminal1
             {
                 tickTime = DateTime.Now;
                 chartEntry = chartFiling.CreateElement("measure");
-                chartEntry.SetAttribute("date", "");
-                chartEntry.SetAttribute("time", "");
+                chartEntry.SetAttribute("date", DateTime.Now.ToString("yyyy-MM-dd"));
+                chartEntry.SetAttribute("time", DateTime.Now.ToString("HH:mm:ss"));
                 chartFiling.DocumentElement.AppendChild(chartEntry);
                 if (tickTime.Minute == 0 & tickTime.Second == 0)
                 {
                     // every hour send time sync
                     serialPortCOM.Write("U<time>" + DateTime.Now.ToLongTimeString() + "</time>" + ownLF);
                     // store chartFiling
-                    // ...
+                    if (Directory.Exists(Directory.GetParent(textBoxFile.Text).ToString()))
+                    {
+                        chartFiling.Save(textBoxFile.Text);
+                    }
                 }
                 foreach (Series aSeries in chartGraph.Series)
                 {
