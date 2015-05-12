@@ -20,7 +20,10 @@ namespace POETerminal1
         public string serialBuffer;
         public string ownLF = "\n\0";
         public int seriesTick;
+        public DateTime tickTime;
         private CultureInfo cult = new CultureInfo("en-US");
+        public XmlDocument chartFiling;
+        public XmlElement chartEntry;
 
         public MainForm() {
             InitializeComponent();
@@ -112,7 +115,7 @@ namespace POETerminal1
                             string myStrValue = myMessage.DocumentElement.GetAttribute("value");
                             double myDblValue;
                             Double.TryParse(myStrValue,NumberStyles.AllowLeadingSign|NumberStyles.AllowDecimalPoint,cult,out myDblValue);
-                            chartGraph.Series[mySeriesName].Points.AddXY((double)seriesTick,myDblValue);
+                            chartGraph.Series[mySeriesName].Points.AddXY(tickTime,myDblValue);
                             break;
                         default:
                             // non-usable message ... should be passed to first node again
@@ -224,7 +227,13 @@ namespace POETerminal1
             mySeries.Legend = "Legend1";
             mySeries.ChartArea = "ChartAreaGraph";
             chartGraph.Series.Add(mySeries);
-            if (!timerGraph.Enabled) { timerGraph.Enabled = true; }
+            if (!timerGraph.Enabled) 
+            {
+                // 200 ms means search Minute pass (seconds == 0)
+                timerGraph.Interval = 200;
+                timerGraph.Enabled = true; 
+
+            }
         }
 
         private void treeViewNet_ItemDrag(object sender, ItemDragEventArgs e)
@@ -249,13 +258,44 @@ namespace POETerminal1
 
         private void timerGraph_Tick(object sender, EventArgs e)
         {
-            seriesTick++;
-            foreach (Series aSeries in chartGraph.Series)
+            //seriesTick++;
+            textBoxOutput.Clear();
+            if (timerGraph.Interval < 1000)
             {
-                string myMessage = "U" + aSeries.Name;
-                textBoxInput.Text = myMessage;
-                serialPortCOM.Write(myMessage + ownLF);
-                System.Threading.Thread.Sleep(500);
+                if (DateTime.Now.Second == 0)
+                {
+                    chartFiling = new XmlDocument();
+                    chartFiling.AppendChild( chartFiling.CreateElement("chart"));
+                    timerGraph.Interval = 60000;
+                    timerGraph.Enabled = true;
+                }
+            }
+            else
+            {
+                tickTime = DateTime.Now;
+                chartEntry = chartFiling.CreateElement("measure");
+                chartEntry.SetAttribute("date", "");
+                chartEntry.SetAttribute("time", "");
+                chartFiling.DocumentElement.AppendChild(chartEntry);
+                if (tickTime.Minute == 0 & tickTime.Second == 0)
+                {
+                    // every hour send time sync
+                    serialPortCOM.Write("U<time>" + DateTime.Now.ToLongTimeString() + "</time>" + ownLF);
+                    // store chartFiling
+                    // ...
+                }
+                foreach (Series aSeries in chartGraph.Series)
+                {
+                    // as there maybe a time sync ahead wait before sending
+                    for (int cnt = 0; cnt < 5; cnt++)
+                    {
+                        Application.DoEvents();
+                        System.Threading.Thread.Sleep(50);
+                    }
+                    string myMessage = "U" + aSeries.Name;
+                    textBoxInput.Text = myMessage;
+                    serialPortCOM.Write(myMessage + ownLF);
+                }
             }
         }
 
