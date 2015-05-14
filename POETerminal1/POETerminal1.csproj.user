@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-<<<<<<< HEAD
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>G:\VCS\POETerminal1\POETerminal1\Config\POETerminal1.config</StartArguments>
   </PropertyGroup>
@@ -9,20 +8,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <PublishUrlHistory>X:\POETerminal\|publish\</PublishUrlHistory>
-=======
-  <PropertyGroup>
-    <PublishUrlHistory />
->>>>>>> 5416232f43ff4120a1cc838166f8622a328b7e9e
     <InstallUrlHistory />
     <SupportUrlHistory />
     <UpdateUrlHistory />
     <BootstrapperUrlHistory />
     <ErrorReportUrlHistory />
-<<<<<<< HEAD
     <FallbackCulture>en-US</FallbackCulture>
-=======
-    <FallbackCulture>de-DE</FallbackCulture>
->>>>>>> 5416232f43ff4120a1cc838166f8622a328b7e9e
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
 </Project>
