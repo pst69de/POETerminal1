@@ -16,6 +16,8 @@ namespace POETerminal1
 {
     public partial class MainForm : Form
     {
+        private string[] ownArgs;
+        private string ownConfig;
         public delegate void readSerial();
         public readSerial readLines;
         private bool _canInvoke = true;
@@ -32,12 +34,101 @@ namespace POETerminal1
             readLines = new readSerial(readFromSerial);
         }
 
+        public MainForm(string[] args)
+            : this()
+        {
+            ownArgs = args;
+        }
+
         private void MainForm_Shown(object sender, EventArgs e) {
             string[] portNames = System.IO.Ports.SerialPort.GetPortNames();
             foreach (string serPort in portNames) {
                 comboBoxCOM.Items.Add(serPort);
             }
             buttonDisconnect.Enabled = false;
+            if (ownArgs.Length > 0)
+            {
+                if (Directory.Exists(Path.GetDirectoryName(ownArgs[0])))
+                {
+                    // seems a valid file name 
+                    ownConfig = ownArgs[0];
+                    if (File.Exists(ownConfig))
+                    {
+                        // read configuration
+                        XmlNode aConfNode;
+                        XmlElement aConfElement;
+                        XmlText aConfText;
+                        XmlDocument myConfig = new XmlDocument();
+                        bool loadSuccess = true;
+                        try
+                        {
+                            myConfig.Load(ownConfig);
+                        }
+                        catch
+                        {
+                            loadSuccess = false;
+                        }
+                        if (loadSuccess)
+                        {
+                            aConfNode = myConfig.DocumentElement.SelectSingleNode("COM");
+                            if (aConfNode != null)
+                            {
+                                if (aConfNode is XmlElement)
+                                {
+                                    aConfElement = (XmlElement)aConfNode;
+                                    if (aConfElement.FirstChild is XmlText)
+                                    {
+                                        aConfText = (XmlText)aConfElement.FirstChild;
+                                        comboBoxCOM.Text = aConfText.Value;
+                                    }
+                                }
+                            }
+                            aConfNode = myConfig.DocumentElement.SelectSingleNode("LOG");
+                            if (aConfNode != null)
+                            {
+                                if (aConfNode is XmlElement)
+                                {
+                                    aConfElement = (XmlElement)aConfNode;
+                                    if (aConfElement.FirstChild is XmlText)
+                                    {
+                                        aConfText = (XmlText)aConfElement.FirstChild;
+                                        textBoxFile.Text = aConfText.Value;
+                                    }
+                                }
+                            }
+                            aConfNode = myConfig.DocumentElement.SelectSingleNode("net");
+                            if (aConfNode != null)
+                            {
+                                if (aConfNode is XmlElement)
+                                {
+                                    aConfElement = (XmlElement)aConfNode;
+                                    treeViewNet.BeginUpdate();
+                                    treeViewNet.Nodes.Clear();
+                                    TreeNode myTreeNet = treeViewNet.Nodes.Add("<net/>", "<net/>");
+                                    XmlNodeList myNodes = aConfElement.SelectNodes("node");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        XmlElement myNetNode = (XmlElement)aNode;
+                                        string myNodeId = "<node id=\"" + myNetNode.GetAttribute("id") + "\" name=\"" + myNetNode.GetAttribute("name") + "\" />";
+                                        TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, myNodeId);
+                                        XmlNodeList mySensors = myNetNode.SelectNodes("analog|digital|switch|pwm");
+                                        foreach (XmlNode aSensor in mySensors)
+                                        {
+                                            XmlElement mySensor = (XmlElement)aSensor;
+                                            myNodeId = "<" + mySensor.Name
+                                                     + " node=\"" + myNetNode.GetAttribute("id")
+                                                     + "\" id=\"" + mySensor.GetAttribute("id") + "\" />";
+                                            myTreeNetNode.Nodes.Add(myNodeId, mySensor.OuterXml);
+                                            // add as Series, when Series become removable
+                                        }
+                                    }
+                                    treeViewNet.EndUpdate();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void buttonConnnect_Click(object sender, EventArgs e) {
@@ -93,17 +184,15 @@ namespace POETerminal1
                             myNodes = myMessage.DocumentElement.SelectNodes("node");
                             foreach (XmlNode aNode in myNodes) {
                                 XmlElement myNetNode = (XmlElement)aNode;
-                                myNodeId = "<node id=\"" + myNetNode.GetAttribute("id") + "\" />";
-                                TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, "<node/>");
-                                myTreeNetNode.Nodes.Add("id='" + myNetNode.GetAttribute("id") + "'");
-                                myTreeNetNode.Nodes.Add("name='" + myNetNode.GetAttribute("name") + "'");
+                                myNodeId = "<node id=\"" + myNetNode.GetAttribute("id") + "\" name=\"" + myNetNode.GetAttribute("name") + "\" />";
+                                TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, myNodeId);
                             }
                             treeViewNet.EndUpdate();
                             break;
                         case "node":
                             // bring sensor/actor listing to "node"-Node of treeViewNet
                             treeViewNet.BeginUpdate();
-                            myNodeId = "<node id=\"" + myMessage.DocumentElement.GetAttribute("id") + "\" />";
+                            myNodeId = "<node id=\"" + myMessage.DocumentElement.GetAttribute("id") + "\" name=\"" + myMessage.DocumentElement.GetAttribute("name") + "\" />";
                             TreeNode[] myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
                             if (myTreeNodes.Count() > 0) {
                                 myNodes = myMessage.DocumentElement.SelectNodes("analog|digital|switch|pwm");
@@ -123,7 +212,7 @@ namespace POETerminal1
                             myStrValue = myMessage.DocumentElement.GetAttribute("value");
                             Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
                             mySeriesName = "<analog node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series[mySeriesName] != null)
+                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
                             {
                                 chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
                                 if (chartEntry != null)
@@ -142,7 +231,7 @@ namespace POETerminal1
                             myStrValue = myMessage.DocumentElement.GetAttribute("value");
                             Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
                             mySeriesName = "<digital node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series[mySeriesName] != null)
+                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
                             {
                                 chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
                                 if (chartEntry != null)
@@ -161,7 +250,7 @@ namespace POETerminal1
                             myStrValue = myMessage.DocumentElement.GetAttribute("value");
                             Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
                             mySeriesName = "<switch node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series[mySeriesName] != null)
+                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
                             {
                                 chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
                                 if (chartEntry != null)
@@ -180,7 +269,7 @@ namespace POETerminal1
                             myStrValue = myMessage.DocumentElement.GetAttribute("value");
                             Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
                             mySeriesName = "<pwm node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series[mySeriesName] != null)
+                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
                             {
                                 chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
                                 if (chartEntry != null)
@@ -259,6 +348,54 @@ namespace POETerminal1
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (serialPortCOM.IsOpen) {
                 serialPortCOM.Close();
+            }
+            if (ownConfig.Length > 0)
+            {
+                // store configuration 
+                XmlDocument myConfig = new XmlDocument();
+                myConfig.AppendChild(myConfig.CreateElement("POETerminal"));
+                XmlElement anElement = myConfig.CreateElement("COM");
+                XmlText aText = myConfig.CreateTextNode(comboBoxCOM.Text);
+                anElement.AppendChild(aText);
+                myConfig.DocumentElement.AppendChild(anElement);
+                anElement = myConfig.CreateElement("LOG");
+                aText = myConfig.CreateTextNode(textBoxFile.Text);
+                anElement.AppendChild(aText);
+                myConfig.DocumentElement.AppendChild(anElement);
+                // store net configuration from treeview
+                TreeNode[] myTreeNodes = treeViewNet.Nodes.Find("<net/>", true);
+                if (myTreeNodes.Length > 0)
+                {
+                    TreeNode myNetNode = myTreeNodes[0];
+                    anElement = myConfig.CreateElement("net");
+                    myConfig.DocumentElement.AppendChild(anElement);
+                    foreach (TreeNode myNodeNode in myNetNode.Nodes)
+                    {
+                        string nodeDescription = myNodeNode.Name;
+                        XmlDocumentFragment myNodeElement = myConfig.CreateDocumentFragment();
+                        myNodeElement.InnerXml = nodeDescription;
+                        anElement.AppendChild(myNodeElement);
+                    }
+                }
+                // store graphing configuration of chartGraph.Series
+                if (chartGraph.Series.Count > 0)
+                {
+                    foreach (Series aSeries in chartGraph.Series)
+                    {
+                        string myNodeSensor = aSeries.Name;
+                        XmlDocumentFragment mySensor = myConfig.CreateDocumentFragment();
+                        mySensor.InnerXml = myNodeSensor;
+                        XmlElement mySensorElement = (XmlElement)mySensor.FirstChild;
+                        string mySelect = "//node[@id=\"" + mySensorElement.GetAttribute("node") + "\"]";
+                        XmlElement myNodeElement = (XmlElement)myConfig.SelectSingleNode(mySelect);
+                        if (myNodeElement != null)
+                        {
+                            myNodeElement.AppendChild(mySensor);
+                        }
+                    }
+                }
+
+                myConfig.Save(ownConfig);
             }
         }
 
@@ -372,7 +509,8 @@ namespace POETerminal1
             else
             {
                 tickTime = DateTime.Now;
-                if ((tickTime.Minute == 0) & (tickTime.Second == 0))
+                tickTime = tickTime.AddSeconds(-tickTime.Second);
+                if (tickTime.Minute == 0)
                 {
                     // every hour send time sync
                     //serialPortCOM.Write("U<time>" + DateTime.Now.ToLongTimeString() + "</time>" + ownLF);
@@ -382,18 +520,24 @@ namespace POETerminal1
                         string myFileBase = Path.GetDirectoryName(textBoxFile.Text);
                         if (Directory.Exists(myFileBase))
                         {
-                            string myFileXmlName = Path.ChangeExtension(textBoxFile.Text, tickTime.ToString("yyyyMMddHHmm") + ".xml");
-                            string myFilePngName = Path.ChangeExtension(textBoxFile.Text, tickTime.ToString("yyyyMMddHHmm") + ".png");
+                            string myFileXmlName = Path.ChangeExtension(textBoxFile.Text, tickTime.ToString("yyyyMMdd") + ".xml");
+                            //string myFilePngName = Path.ChangeExtension(textBoxFile.Text, tickTime.ToString("yyyyMMdd") + ".png");
                             chartFiling.Save(myFileXmlName);
-                            Bitmap storeBitmap = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                            chartGraph.DrawToBitmap(storeBitmap, new Rectangle(0, 0, 1024, 1024));
-                            storeBitmap.Save(myFilePngName, ImageFormat.Png);
+                            //Bitmap storeBitmap = new Bitmap(1024, 1024, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                            //chartGraph.DrawToBitmap(storeBitmap, new Rectangle(0, 0, 1024, 1024));
+                            //storeBitmap.Save(myFilePngName, ImageFormat.Png);
                         }
+                    }
+                    if (tickTime.Hour == 0)
+                    {
+                        // reset XmlDocument
+                        chartFiling = new XmlDocument();
+                        chartFiling.AppendChild(chartFiling.CreateElement("chart"));
                     }
                 }
                 chartEntry = chartFiling.CreateElement("measure");
-                chartEntry.SetAttribute("date", DateTime.Now.ToString("yyyy-MM-dd"));
-                chartEntry.SetAttribute("time", DateTime.Now.ToString("HH:mm:ss"));
+                chartEntry.SetAttribute("date", tickTime.ToString("yyyy-MM-dd"));
+                chartEntry.SetAttribute("time", tickTime.ToString("HH:mm:ss"));
                 chartFiling.DocumentElement.AppendChild(chartEntry);
                 foreach (Series aSeries in chartGraph.Series)
                 {
