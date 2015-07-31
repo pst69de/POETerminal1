@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panelConnect = new System.Windows.Forms.Panel();
             this.treeViewNet = new System.Windows.Forms.TreeView();
@@ -75,8 +75,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panelGraf);
-            this.splitContainer1.Size = new System.Drawing.Size(838, 478);
-            this.splitContainer1.SplitterDistance = 399;
+            this.splitContainer1.Size = new System.Drawing.Size(1264, 682);
+            this.splitContainer1.SplitterDistance = 360;
             this.splitContainer1.TabIndex = 0;
             // 
             // panelConnect
@@ -100,7 +100,7 @@
             this.panelConnect.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelConnect.Location = new System.Drawing.Point(0, 0);
             this.panelConnect.Name = "panelConnect";
-            this.panelConnect.Size = new System.Drawing.Size(399, 478);
+            this.panelConnect.Size = new System.Drawing.Size(360, 682);
             this.panelConnect.TabIndex = 0;
             // 
             // treeViewNet
@@ -109,7 +109,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewNet.Location = new System.Drawing.Point(12, 92);
             this.treeViewNet.Name = "treeViewNet";
-            this.treeViewNet.Size = new System.Drawing.Size(382, 155);
+            this.treeViewNet.Size = new System.Drawing.Size(343, 155);
             this.treeViewNet.TabIndex = 0;
             this.treeViewNet.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeViewNet_ItemDrag);
             this.treeViewNet.DoubleClick += new System.EventHandler(this.treeViewNet_DoubleClick);
@@ -163,7 +163,7 @@
             this.textBoxOutput.Multiline = true;
             this.textBoxOutput.Name = "textBoxOutput";
             this.textBoxOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxOutput.Size = new System.Drawing.Size(384, 158);
+            this.textBoxOutput.Size = new System.Drawing.Size(345, 362);
             this.textBoxOutput.TabIndex = 10;
             this.textBoxOutput.WordWrap = false;
             // 
@@ -179,7 +179,7 @@
             // buttonEnter
             // 
             this.buttonEnter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonEnter.Location = new System.Drawing.Point(316, 268);
+            this.buttonEnter.Location = new System.Drawing.Point(277, 268);
             this.buttonEnter.Name = "buttonEnter";
             this.buttonEnter.Size = new System.Drawing.Size(80, 21);
             this.buttonEnter.TabIndex = 8;
@@ -194,7 +194,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxInput.Location = new System.Drawing.Point(12, 268);
             this.textBoxInput.Name = "textBoxInput";
-            this.textBoxInput.Size = new System.Drawing.Size(298, 20);
+            this.textBoxInput.Size = new System.Drawing.Size(259, 20);
             this.textBoxInput.TabIndex = 7;
             this.textBoxInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxInput_KeyUp);
             // 
@@ -210,7 +210,7 @@
             // buttonSelectFile
             // 
             this.buttonSelectFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectFile.Location = new System.Drawing.Point(316, 39);
+            this.buttonSelectFile.Location = new System.Drawing.Point(277, 39);
             this.buttonSelectFile.Name = "buttonSelectFile";
             this.buttonSelectFile.Size = new System.Drawing.Size(80, 21);
             this.buttonSelectFile.TabIndex = 5;
@@ -223,13 +223,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFile.Location = new System.Drawing.Point(12, 39);
             this.textBoxFile.Name = "textBoxFile";
-            this.textBoxFile.Size = new System.Drawing.Size(298, 20);
+            this.textBoxFile.Size = new System.Drawing.Size(259, 20);
             this.textBoxFile.TabIndex = 4;
             // 
             // buttonReset
             // 
             this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.Location = new System.Drawing.Point(356, 12);
+            this.buttonReset.Location = new System.Drawing.Point(317, 12);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(40, 21);
             this.buttonReset.TabIndex = 3;
@@ -240,7 +240,7 @@
             // buttonDisconnect
             // 
             this.buttonDisconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDisconnect.Location = new System.Drawing.Point(310, 12);
+            this.buttonDisconnect.Location = new System.Drawing.Point(271, 12);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(40, 21);
             this.buttonDisconnect.TabIndex = 2;
@@ -251,7 +251,7 @@
             // buttonConnnect
             // 
             this.buttonConnnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonConnnect.Location = new System.Drawing.Point(264, 12);
+            this.buttonConnnect.Location = new System.Drawing.Point(225, 12);
             this.buttonConnnect.Name = "buttonConnnect";
             this.buttonConnnect.Size = new System.Drawing.Size(40, 21);
             this.buttonConnnect.TabIndex = 1;
@@ -266,7 +266,7 @@
             this.comboBoxCOM.FormattingEnabled = true;
             this.comboBoxCOM.Location = new System.Drawing.Point(12, 12);
             this.comboBoxCOM.Name = "comboBoxCOM";
-            this.comboBoxCOM.Size = new System.Drawing.Size(246, 21);
+            this.comboBoxCOM.Size = new System.Drawing.Size(207, 21);
             this.comboBoxCOM.TabIndex = 0;
             // 
             // panelGraf
@@ -275,20 +275,22 @@
             this.panelGraf.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraf.Location = new System.Drawing.Point(0, 0);
             this.panelGraf.Name = "panelGraf";
-            this.panelGraf.Size = new System.Drawing.Size(435, 478);
+            this.panelGraf.Size = new System.Drawing.Size(900, 682);
             this.panelGraf.TabIndex = 0;
             // 
             // chartGraph
             // 
             this.chartGraph.AllowDrop = true;
-            chartArea2.Name = "ChartAreaGraph";
-            this.chartGraph.ChartAreas.Add(chartArea2);
+            chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.CursorY.IsUserEnabled = true;
+            chartArea1.Name = "ChartAreaGraph";
+            this.chartGraph.ChartAreas.Add(chartArea1);
             this.chartGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.chartGraph.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.chartGraph.Legends.Add(legend1);
             this.chartGraph.Location = new System.Drawing.Point(0, 0);
             this.chartGraph.Name = "chartGraph";
-            this.chartGraph.Size = new System.Drawing.Size(435, 478);
+            this.chartGraph.Size = new System.Drawing.Size(900, 682);
             this.chartGraph.TabIndex = 0;
             this.chartGraph.Text = "chart1";
             this.chartGraph.DragDrop += new System.Windows.Forms.DragEventHandler(this.chartGraph_DragDrop);
@@ -307,7 +309,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(838, 478);
+            this.ClientSize = new System.Drawing.Size(1264, 682);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MainForm";
             this.Text = "POETerminal V1";
