@@ -53,6 +53,7 @@
             this.chartGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.serialPortCOM = new System.IO.Ports.SerialPort(this.components);
             this.timerGraph = new System.Windows.Forms.Timer(this.components);
+            this.checkBoxClearOut = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -81,6 +82,7 @@
             // 
             // panelConnect
             // 
+            this.panelConnect.Controls.Add(this.checkBoxClearOut);
             this.panelConnect.Controls.Add(this.treeViewNet);
             this.panelConnect.Controls.Add(this.buttonTestNet);
             this.panelConnect.Controls.Add(this.buttonNet);
@@ -305,6 +307,18 @@
             this.timerGraph.Interval = 60000;
             this.timerGraph.Tick += new System.EventHandler(this.timerGraph_Tick);
             // 
+            // checkBoxClearOut
+            // 
+            this.checkBoxClearOut.AutoSize = true;
+            this.checkBoxClearOut.Checked = true;
+            this.checkBoxClearOut.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxClearOut.Location = new System.Drawing.Point(42, 290);
+            this.checkBoxClearOut.Name = "checkBoxClearOut";
+            this.checkBoxClearOut.Size = new System.Drawing.Size(49, 17);
+            this.checkBoxClearOut.TabIndex = 16;
+            this.checkBoxClearOut.Text = "clear";
+            this.checkBoxClearOut.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -351,6 +365,7 @@
         private System.Windows.Forms.Button buttonBL;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartGraph;
         private System.Windows.Forms.Timer timerGraph;
+        private System.Windows.Forms.CheckBox checkBoxClearOut;
     }
 }
 

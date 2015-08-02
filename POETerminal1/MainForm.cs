@@ -184,248 +184,258 @@ namespace POETerminal1
         }
 
         public void interpretSerial() {
-            if ((serialBuffer.Length > 0) && (serialBuffer[0] == 'U'))
+            if (serialBuffer != null)
             {
-                serialBuffer = serialBuffer.Substring(1);
-                XmlDocument myMessage = new XmlDocument();
-                XmlNodeList myNodes;
-                string myNodeId;
-                string myNode;
-                string myId;
-                string myStrValue;
-                double myDblValue;
-                string mySeriesName;
-                TreeNode[] myTreeNodes;
-                string mySensorValue;
-                TreeNode[] myTreeSensors;
+                if ((serialBuffer.Length > 0) && (serialBuffer[0] == 'U'))
+                {
+                    serialBuffer = serialBuffer.Substring(1);
+                    XmlDocument myMessage = new XmlDocument();
+                    XmlNodeList myNodes;
+                    string myNodeId;
+                    string myNode;
+                    string myId;
+                    string myStrValue;
+                    double myDblValue;
+                    string mySeriesName;
+                    TreeNode[] myTreeNodes;
+                    string mySensorValue;
+                    TreeNode[] myTreeSensors;
 
-                XmlElement measureEntry;
-                bool readable = true;
-                try {
-                    myMessage.LoadXml(serialBuffer);
-                }
-                catch (Exception e) {
-                    readable = false;
-                }
-                if (readable) {
-                    switch (myMessage.DocumentElement.Name) {
-                        case "time":
-                            if (_autoConnecting)
-                            {
-                                timerGraph.Interval = 200;
-                                timerGraph.Enabled = true;
-                                _autoConnecting = false;
-                            }
-                            break;
-                        case "net":
-                            // bring node listing to treeViewNet
-                            treeViewNet.BeginUpdate();
-                            treeViewNet.Nodes.Clear();
-                            TreeNode myTreeNet = treeViewNet.Nodes.Add("<net/>", "<net/>");
-                            myNodes = myMessage.DocumentElement.SelectNodes("node");
-                            foreach (XmlNode aNode in myNodes) {
-                                XmlElement myNetNode = (XmlElement)aNode;
-                                myNodeId = "<node id=\"" + myNetNode.GetAttribute("id") + "\" name=\"" + myNetNode.GetAttribute("name") + "\" />";
-                                TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, myNodeId);
-                            }
-                            treeViewNet.EndUpdate();
-                            break;
-                        case "node":
-                            // bring sensor/actor listing to "node"-Node of treeViewNet
-                            treeViewNet.BeginUpdate();
-                            myNodeId = "<node id=\"" + myMessage.DocumentElement.GetAttribute("id") + "\" name=\"" + myMessage.DocumentElement.GetAttribute("name") + "\" />";
-                            myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
-                            if (myTreeNodes.Count() > 0) {
-                                myNodes = myMessage.DocumentElement.SelectNodes("analog|digital|switch|pwm");
-                                foreach (XmlNode aNode in myNodes) {
-                                    XmlElement myElement = (XmlElement)aNode;
-                                    myNodeId = "<" + myElement.Name
-                                             + " node=\"" + myMessage.DocumentElement.GetAttribute("id")
-                                             + "\" id=\"" + myElement.GetAttribute("id") + "\" />";
-                                    //myTreeNodes[0].Nodes.Add(myNodeId, aNode.OuterXml);
-                                    myTreeNodes[0].Nodes.Add(myNodeId, myNodeId);
-                                }
-                            }
-                            treeViewNet.EndUpdate();
-                            break;
-                        case "analog":
-                            myNode = myMessage.DocumentElement.GetAttribute("node");
-                            myId = myMessage.DocumentElement.GetAttribute("id");
-                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
-                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
-                            mySeriesName = "<analog node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
-                            {
-                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
-                                if (chartEntry != null)
-                                {
-                                    measureEntry = chartFiling.CreateElement("analog");
-                                    measureEntry.SetAttribute("node", myNode);
-                                    measureEntry.SetAttribute("id", myId);
-                                    measureEntry.SetAttribute("value", myStrValue);
-                                    chartEntry.AppendChild(measureEntry);
-                                }
-                            }
-                            myNodeId = "<analog" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
-                            if (myTreeNodes.Count() > 0)
-                            {
-                                myNodes = myMessage.DocumentElement.SelectNodes("numerator|denominator|offset|unit");
-                                foreach (XmlNode aNode in myNodes)
-                                {
-                                    XmlElement myElement = (XmlElement)aNode;
-                                    mySensorValue = "<" + myElement.Name
-                                                  + " value=\"" + myElement.GetAttribute("value")
-                                                  + "\" />";
-                                    myNodeId = "<analog" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
-                                             + "<" + myElement.Name + "></" + myElement.Name + ">"
-                                             + "</analog>";
-                                    myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
-                                    if (myTreeSensors.Count() == 0)
-                                    {
-                                        myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
-                                    }
-                                    else
-                                    {
-                                        myTreeSensors[0].Text = mySensorValue;
-                                    }
-                                }
-                            }
-                            break;
-                        case "digital":
-                            myNode = myMessage.DocumentElement.GetAttribute("node");
-                            myId = myMessage.DocumentElement.GetAttribute("id");
-                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
-                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
-                            mySeriesName = "<digital node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
-                            {
-                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
-                                if (chartEntry != null)
-                                {
-                                    measureEntry = chartFiling.CreateElement("digital");
-                                    measureEntry.SetAttribute("node", myNode);
-                                    measureEntry.SetAttribute("id", myId);
-                                    measureEntry.SetAttribute("value", myStrValue);
-                                    chartEntry.AppendChild(measureEntry);
-                                }
-                            }
-                            myNodeId = "<digital" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
-                            if (myTreeNodes.Count() > 0)
-                            {
-                                myNodes = myMessage.DocumentElement.SelectNodes("lovalue|hivalue");
-                                foreach (XmlNode aNode in myNodes)
-                                {
-                                    XmlElement myElement = (XmlElement)aNode;
-                                    mySensorValue = "<" + myElement.Name
-                                                  + " value=\"" + myElement.GetAttribute("value")
-                                                  + "\" />";
-                                    myNodeId = "<digital" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
-                                             + "<" + myElement.Name + "></" + myElement.Name + ">"
-                                             + "</digital>";
-                                    myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
-                                    if (myTreeSensors.Count() == 0)
-                                    {
-                                        myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
-                                    }
-                                }
-                            }
-                            break;
-                        case "switch":
-                            myNode = myMessage.DocumentElement.GetAttribute("node");
-                            myId = myMessage.DocumentElement.GetAttribute("id");
-                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
-                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
-                            mySeriesName = "<switch node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
-                            {
-                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
-                                if (chartEntry != null)
-                                {
-                                    measureEntry = chartFiling.CreateElement("switch");
-                                    measureEntry.SetAttribute("node", myNode);
-                                    measureEntry.SetAttribute("id", myId);
-                                    measureEntry.SetAttribute("value", myStrValue);
-                                    chartEntry.AppendChild(measureEntry);
-                                }
-                            }
-                            myNodeId = "<switch" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
-                            if (myTreeNodes.Count() > 0)
-                            {
-                                myNodes = myMessage.DocumentElement.SelectNodes("lovalue|hivalue");
-                                foreach (XmlNode aNode in myNodes)
-                                {
-                                    XmlElement myElement = (XmlElement)aNode;
-                                    mySensorValue = "<" + myElement.Name
-                                                  + " value=\"" + myElement.GetAttribute("value")
-                                                  + "\" />";
-                                    myNodeId = "<switch" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
-                                             + "<" + myElement.Name + "></" + myElement.Name + ">"
-                                             + "</switch>";
-                                    myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
-                                    if (myTreeSensors.Count() == 0)
-                                    {
-                                        myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
-                                    }
-                                }
-                            }
-                            break;
-                        case "pwm":
-                            myNode = myMessage.DocumentElement.GetAttribute("node");
-                            myId = myMessage.DocumentElement.GetAttribute("id");
-                            myStrValue = myMessage.DocumentElement.GetAttribute("value");
-                            Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
-                            mySeriesName = "<pwm node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
-                            {
-                                chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
-                                if (chartEntry != null)
-                                {
-                                    measureEntry = chartFiling.CreateElement("pwm");
-                                    measureEntry.SetAttribute("node", myNode);
-                                    measureEntry.SetAttribute("id", myId);
-                                    measureEntry.SetAttribute("value", myStrValue);
-                                    chartEntry.AppendChild(measureEntry);
-                                }
-                            }
-                            myNodeId = "<pwm" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
-                            myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
-                            if (myTreeNodes.Count() > 0)
-                            {
-                                myNodes = myMessage.DocumentElement.SelectNodes("frequency");
-                                foreach (XmlNode aNode in myNodes)
-                                {
-                                    XmlElement myElement = (XmlElement)aNode;
-                                    mySensorValue = "<" + myElement.Name
-                                                  + " value=\"" + myElement.GetAttribute("value")
-                                                  + "\" />";
-                                    myNodeId = "<pwm" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
-                                             + "<" + myElement.Name + "></" + myElement.Name + ">"
-                                             + "</pwm>";
-                                    myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
-                                    if (myTreeSensors.Count() == 0)
-                                    {
-                                        myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
-                                    }
-                                }
-                            }
-                            break;
-                        default:
-                            // non-usable message ... should be passed to first node again
-                            break;
+                    XmlElement measureEntry;
+                    bool readable = true;
+                    try
+                    {
+                        myMessage.LoadXml(serialBuffer);
                     }
+                    catch (Exception e)
+                    {
+                        readable = false;
+                    }
+                    if (readable)
+                    {
+                        switch (myMessage.DocumentElement.Name)
+                        {
+                            case "time":
+                                if (_autoConnecting)
+                                {
+                                    timerGraph.Interval = 200;
+                                    timerGraph.Enabled = true;
+                                    _autoConnecting = false;
+                                }
+                                break;
+                            case "net":
+                                // bring node listing to treeViewNet
+                                treeViewNet.BeginUpdate();
+                                treeViewNet.Nodes.Clear();
+                                TreeNode myTreeNet = treeViewNet.Nodes.Add("<net/>", "<net/>");
+                                myNodes = myMessage.DocumentElement.SelectNodes("node");
+                                foreach (XmlNode aNode in myNodes)
+                                {
+                                    XmlElement myNetNode = (XmlElement)aNode;
+                                    myNodeId = "<node id=\"" + myNetNode.GetAttribute("id") + "\" name=\"" + myNetNode.GetAttribute("name") + "\" />";
+                                    TreeNode myTreeNetNode = myTreeNet.Nodes.Add(myNodeId, myNodeId);
+                                }
+                                treeViewNet.EndUpdate();
+                                break;
+                            case "node":
+                                // bring sensor/actor listing to "node"-Node of treeViewNet
+                                treeViewNet.BeginUpdate();
+                                myNodeId = "<node id=\"" + myMessage.DocumentElement.GetAttribute("id") + "\" name=\"" + myMessage.DocumentElement.GetAttribute("name") + "\" />";
+                                myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
+                                if (myTreeNodes.Count() > 0)
+                                {
+                                    myNodes = myMessage.DocumentElement.SelectNodes("analog|digital|switch|pwm");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        XmlElement myElement = (XmlElement)aNode;
+                                        myNodeId = "<" + myElement.Name
+                                                 + " node=\"" + myMessage.DocumentElement.GetAttribute("id")
+                                                 + "\" id=\"" + myElement.GetAttribute("id") + "\" />";
+                                        //myTreeNodes[0].Nodes.Add(myNodeId, aNode.OuterXml);
+                                        myTreeNodes[0].Nodes.Add(myNodeId, myNodeId);
+                                    }
+                                }
+                                treeViewNet.EndUpdate();
+                                break;
+                            case "analog":
+                                myNode = myMessage.DocumentElement.GetAttribute("node");
+                                myId = myMessage.DocumentElement.GetAttribute("id");
+                                myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                                Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                                mySeriesName = "<analog node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
+                                {
+                                    chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                    if (chartEntry != null)
+                                    {
+                                        measureEntry = chartFiling.CreateElement("analog");
+                                        measureEntry.SetAttribute("node", myNode);
+                                        measureEntry.SetAttribute("id", myId);
+                                        measureEntry.SetAttribute("value", myStrValue);
+                                        chartEntry.AppendChild(measureEntry);
+                                    }
+                                }
+                                myNodeId = "<analog" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
+                                if (myTreeNodes.Count() > 0)
+                                {
+                                    myNodes = myMessage.DocumentElement.SelectNodes("numerator|denominator|offset|unit");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        XmlElement myElement = (XmlElement)aNode;
+                                        mySensorValue = "<" + myElement.Name
+                                                      + " value=\"" + myElement.GetAttribute("value")
+                                                      + "\" />";
+                                        myNodeId = "<analog" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
+                                                 + "<" + myElement.Name + "></" + myElement.Name + ">"
+                                                 + "</analog>";
+                                        myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
+                                        if (myTreeSensors.Count() == 0)
+                                        {
+                                            myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
+                                        }
+                                        else
+                                        {
+                                            myTreeSensors[0].Text = mySensorValue;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "digital":
+                                myNode = myMessage.DocumentElement.GetAttribute("node");
+                                myId = myMessage.DocumentElement.GetAttribute("id");
+                                myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                                Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                                mySeriesName = "<digital node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
+                                {
+                                    chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                    if (chartEntry != null)
+                                    {
+                                        measureEntry = chartFiling.CreateElement("digital");
+                                        measureEntry.SetAttribute("node", myNode);
+                                        measureEntry.SetAttribute("id", myId);
+                                        measureEntry.SetAttribute("value", myStrValue);
+                                        chartEntry.AppendChild(measureEntry);
+                                    }
+                                }
+                                myNodeId = "<digital" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
+                                if (myTreeNodes.Count() > 0)
+                                {
+                                    myNodes = myMessage.DocumentElement.SelectNodes("lovalue|hivalue");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        XmlElement myElement = (XmlElement)aNode;
+                                        mySensorValue = "<" + myElement.Name
+                                                      + " value=\"" + myElement.GetAttribute("value")
+                                                      + "\" />";
+                                        myNodeId = "<digital" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
+                                                 + "<" + myElement.Name + "></" + myElement.Name + ">"
+                                                 + "</digital>";
+                                        myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
+                                        if (myTreeSensors.Count() == 0)
+                                        {
+                                            myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
+                                        }
+                                    }
+                                }
+                                break;
+                            case "switch":
+                                myNode = myMessage.DocumentElement.GetAttribute("node");
+                                myId = myMessage.DocumentElement.GetAttribute("id");
+                                myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                                Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                                mySeriesName = "<switch node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
+                                {
+                                    chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                    if (chartEntry != null)
+                                    {
+                                        measureEntry = chartFiling.CreateElement("switch");
+                                        measureEntry.SetAttribute("node", myNode);
+                                        measureEntry.SetAttribute("id", myId);
+                                        measureEntry.SetAttribute("value", myStrValue);
+                                        chartEntry.AppendChild(measureEntry);
+                                    }
+                                }
+                                myNodeId = "<switch" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
+                                if (myTreeNodes.Count() > 0)
+                                {
+                                    myNodes = myMessage.DocumentElement.SelectNodes("lovalue|hivalue");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        XmlElement myElement = (XmlElement)aNode;
+                                        mySensorValue = "<" + myElement.Name
+                                                      + " value=\"" + myElement.GetAttribute("value")
+                                                      + "\" />";
+                                        myNodeId = "<switch" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
+                                                 + "<" + myElement.Name + "></" + myElement.Name + ">"
+                                                 + "</switch>";
+                                        myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
+                                        if (myTreeSensors.Count() == 0)
+                                        {
+                                            myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
+                                        }
+                                    }
+                                }
+                                break;
+                            case "pwm":
+                                myNode = myMessage.DocumentElement.GetAttribute("node");
+                                myId = myMessage.DocumentElement.GetAttribute("id");
+                                myStrValue = myMessage.DocumentElement.GetAttribute("value");
+                                Double.TryParse(myStrValue, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, cult, out myDblValue);
+                                mySeriesName = "<pwm node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                if (chartGraph.Series.IndexOf(mySeriesName) >= 0)
+                                {
+                                    chartGraph.Series[mySeriesName].Points.AddXY(tickTime, myDblValue);
+                                    if (chartEntry != null)
+                                    {
+                                        measureEntry = chartFiling.CreateElement("pwm");
+                                        measureEntry.SetAttribute("node", myNode);
+                                        measureEntry.SetAttribute("id", myId);
+                                        measureEntry.SetAttribute("value", myStrValue);
+                                        chartEntry.AppendChild(measureEntry);
+                                    }
+                                }
+                                myNodeId = "<pwm" + " node=\"" + myNode + "\" id=\"" + myId + "\" />";
+                                myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
+                                if (myTreeNodes.Count() > 0)
+                                {
+                                    myNodes = myMessage.DocumentElement.SelectNodes("phase1|width1|phase2|width2");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        XmlElement myElement = (XmlElement)aNode;
+                                        mySensorValue = "<" + myElement.Name
+                                                      + " value=\"" + myElement.GetAttribute("value")
+                                                      + "\" />";
+                                        myNodeId = "<pwm" + " node=\"" + myNode + "\" id=\"" + myId + "\" >"
+                                                 + "<" + myElement.Name + "></" + myElement.Name + ">"
+                                                 + "</pwm>";
+                                        myTreeSensors = myTreeNodes[0].Nodes.Find(myNodeId, true);
+                                        if (myTreeSensors.Count() == 0)
+                                        {
+                                            myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                // non-usable message ... should be passed to first node again
+                                break;
+                        }
+                    }
+                    // clear anyway
+                    serialBuffer = "";
                 }
-                // clear anyway
-                serialBuffer = "";
-            }
-            else
-            {
-                // some sort of secondary messaging, 
-                // should already be placed in textBoxOutput
-                // -> clear buffer
-                serialBuffer = "";
+                else
+                {
+                    // some sort of secondary messaging, 
+                    // should already be placed in textBoxOutput
+                    // -> clear buffer
+                    serialBuffer = "";
+                }
             }
         }
 
@@ -599,7 +609,8 @@ namespace POETerminal1
                     | myMessage.Contains("<unit")
                     | myMessage.Contains("<lovalue")
                     | myMessage.Contains("<hivalue")
-                    | myMessage.Contains("<frequency")
+                    | myMessage.Contains("<phase")
+                    | myMessage.Contains("<width")
                     )
                 {
                     // fill in value by hand
@@ -682,7 +693,7 @@ namespace POETerminal1
         private void timerGraph_Tick(object sender, EventArgs e)
         {
             //seriesTick++;
-            textBoxOutput.Clear();
+            if (checkBoxClearOut.Checked) { textBoxOutput.Clear(); }
             if (timerGraph.Interval < 1000)
             {
                 if (DateTime.Now.Second == 0)
