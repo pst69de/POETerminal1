@@ -28,6 +28,7 @@ namespace POETerminal1
         public XmlDocument chartFiling;
         public XmlElement chartEntry;
         private bool _autoConnecting;
+        private List<FormPWM> _PWMs = new List<FormPWM>();
 
         public MainForm() {
             InitializeComponent();
@@ -151,6 +152,28 @@ namespace POETerminal1
             }
         }
 
+        public FormPWM FindOrAddPWM(string thisNode)
+        {
+
+            FormPWM foundPWM = null;
+            foreach (FormPWM aPWM in _PWMs)
+            {
+                if (aPWM.Node == thisNode)
+                {
+                    foundPWM = aPWM;
+                }
+            }
+            if (foundPWM == null)
+            {
+                // not found -> create
+                foundPWM = new FormPWM();
+                foundPWM.Main = this;
+                foundPWM.Node = thisNode;
+                _PWMs.Add(foundPWM);
+            }
+            foundPWM.Show();
+            return foundPWM;
+        }
 
         private void Connect() 
         {
@@ -183,6 +206,12 @@ namespace POETerminal1
             serialPortCOM.Open();
         }
 
+        public void SerialOut(string thisMessage)
+        {
+            textBoxOutput.Text = "U" + thisMessage;
+            serialPortCOM.Write("U" + thisMessage + ownLF);
+        }
+
         public void interpretSerial() {
             if (serialBuffer != null)
             {
@@ -191,11 +220,13 @@ namespace POETerminal1
                     serialBuffer = serialBuffer.Substring(1);
                     XmlDocument myMessage = new XmlDocument();
                     XmlNodeList myNodes;
+                    XmlElement myElement;
                     string myNodeId;
                     string myNode;
                     string myId;
                     string myStrValue;
                     double myDblValue;
+                    int myIntValue;
                     string mySeriesName;
                     TreeNode[] myTreeNodes;
                     string mySensorValue;
@@ -247,7 +278,7 @@ namespace POETerminal1
                                     myNodes = myMessage.DocumentElement.SelectNodes("analog|digital|switch|pwm");
                                     foreach (XmlNode aNode in myNodes)
                                     {
-                                        XmlElement myElement = (XmlElement)aNode;
+                                        myElement = (XmlElement)aNode;
                                         myNodeId = "<" + myElement.Name
                                                  + " node=\"" + myMessage.DocumentElement.GetAttribute("id")
                                                  + "\" id=\"" + myElement.GetAttribute("id") + "\" />";
@@ -282,7 +313,7 @@ namespace POETerminal1
                                     myNodes = myMessage.DocumentElement.SelectNodes("numerator|denominator|offset|unit");
                                     foreach (XmlNode aNode in myNodes)
                                     {
-                                        XmlElement myElement = (XmlElement)aNode;
+                                        myElement = (XmlElement)aNode;
                                         mySensorValue = "<" + myElement.Name
                                                       + " value=\"" + myElement.GetAttribute("value")
                                                       + "\" />";
@@ -326,7 +357,7 @@ namespace POETerminal1
                                     myNodes = myMessage.DocumentElement.SelectNodes("lovalue|hivalue");
                                     foreach (XmlNode aNode in myNodes)
                                     {
-                                        XmlElement myElement = (XmlElement)aNode;
+                                        myElement = (XmlElement)aNode;
                                         mySensorValue = "<" + myElement.Name
                                                       + " value=\"" + myElement.GetAttribute("value")
                                                       + "\" />";
@@ -366,7 +397,7 @@ namespace POETerminal1
                                     myNodes = myMessage.DocumentElement.SelectNodes("lovalue|hivalue");
                                     foreach (XmlNode aNode in myNodes)
                                     {
-                                        XmlElement myElement = (XmlElement)aNode;
+                                        myElement = (XmlElement)aNode;
                                         mySensorValue = "<" + myElement.Name
                                                       + " value=\"" + myElement.GetAttribute("value")
                                                       + "\" />";
@@ -403,10 +434,10 @@ namespace POETerminal1
                                 myTreeNodes = treeViewNet.Nodes.Find(myNodeId, true);
                                 if (myTreeNodes.Count() > 0)
                                 {
-                                    myNodes = myMessage.DocumentElement.SelectNodes("phase1|width1|phase2|width2");
+                                    myNodes = myMessage.DocumentElement.SelectNodes("width|phase|width2|phase2|width3|phase3|width4");
                                     foreach (XmlNode aNode in myNodes)
                                     {
-                                        XmlElement myElement = (XmlElement)aNode;
+                                        myElement = (XmlElement)aNode;
                                         mySensorValue = "<" + myElement.Name
                                                       + " value=\"" + myElement.GetAttribute("value")
                                                       + "\" />";
@@ -417,6 +448,39 @@ namespace POETerminal1
                                         if (myTreeSensors.Count() == 0)
                                         {
                                             myTreeNodes[0].Nodes.Add(myNodeId, mySensorValue);
+                                        }
+                                    }
+                                }
+                                FormPWM myPWM = FindOrAddPWM(myNode);
+                                if (myPWM != null)
+                                {
+                                    if (Int32.TryParse(myStrValue, out myIntValue))
+                                    {
+                                        myPWM.FrequencyPWM = myIntValue;
+                                    }
+                                    myNodes = myMessage.DocumentElement.SelectNodes("width|phase|width2");
+                                    foreach (XmlNode aNode in myNodes)
+                                    {
+                                        myElement = (XmlElement)aNode;
+                                        if (myElement.Name == "width")
+                                        {
+                                            mySensorValue = myElement.GetAttribute("value");
+                                            if (Int32.TryParse(mySensorValue, out myIntValue))
+                                            {
+                                                myPWM.WidthPWM = myIntValue;
+                                            }
+                                        }
+                                        else if (myElement.Name == "phase")
+                                        {
+                                            mySensorValue = myElement.GetAttribute("value");
+                                            if (Int32.TryParse(mySensorValue, out myIntValue))
+                                            {
+                                                myPWM.PhasePWM = myIntValue;
+                                            }
+                                        }
+                                        else if (myElement.Name == "width2") 
+                                        { 
+                                            // not yet implemented
                                         }
                                     }
                                 }
