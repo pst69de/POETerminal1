@@ -13,10 +13,13 @@ namespace POETerminal1
     {
         MainForm _main;
         string _node;
+        string _id;
 
         public FormPWM()
         {
             InitializeComponent();
+            _node = "0";
+            _id = "0";
         }
 
         public MainForm Main
@@ -28,7 +31,21 @@ namespace POETerminal1
         public string Node
         {
             get { return _node; }
-            set { _node = value; }
+            set
+            {
+                _node = value;
+                this.Text = "PWM - " + _node + "/" + _id;
+            }
+        }
+
+        public string Id
+        {
+            get { return _id; }
+            set
+            {
+                _id = value;
+                this.Text = "PWM - " + _node + "/" + _id;
+            }
         }
 
         public int FrequencyPWM
@@ -71,7 +88,7 @@ namespace POETerminal1
                 if (Int32.TryParse(textBoxFreq.Text, out MainFreq))
                 {
                     textBoxFreq.Text = (MainFreq + AddFreq).ToString();
-                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\">" + textBoxFreq.Text + "</pwm>");
+                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\">" + textBoxFreq.Text + "</pwm>");
                 }
             }
         }
@@ -85,7 +102,7 @@ namespace POETerminal1
                 if (Int32.TryParse(textBoxFreq.Text, out MainFreq))
                 {
                     textBoxFreq.Text = (MainFreq - SubFreq).ToString();
-                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\">" + textBoxFreq.Text + "</pwm>");
+                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\">" + textBoxFreq.Text + "</pwm>");
                 }
             }
         }
@@ -95,7 +112,7 @@ namespace POETerminal1
             int MainFreq;
             if (Int32.TryParse(textBoxFreq.Text, out MainFreq))
             {
-                _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\">" + textBoxFreq.Text + "</pwm>");
+                _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\">" + textBoxFreq.Text + "</pwm>");
             }
         }
 
@@ -108,7 +125,7 @@ namespace POETerminal1
                 if (Int32.TryParse(textBoxWidth.Text, out MainWidth))
                 {
                     textBoxWidth.Text = (MainWidth + AddWidth).ToString();
-                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\"><width>" + textBoxWidth.Text + "</width></pwm>");
+                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\"><width>" + textBoxWidth.Text + "</width></pwm>");
                 }
             }
         }
@@ -122,7 +139,7 @@ namespace POETerminal1
                 if (Int32.TryParse(textBoxWidth.Text, out MainWidth))
                 {
                     textBoxWidth.Text = (MainWidth - SubWidth).ToString();
-                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\"><width>" + textBoxWidth.Text + "</width></pwm>");
+                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\"><width>" + textBoxWidth.Text + "</width></pwm>");
                 }
             }
         }
@@ -133,7 +150,7 @@ namespace POETerminal1
             if (Int32.TryParse(textBoxWidth.Text, out MainWidth))
             {
                 textBoxWidth.Text = (MainWidth).ToString();
-                _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\"><width>" + textBoxWidth.Text + "</width></pwm>");
+                _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\"><width>" + textBoxWidth.Text + "</width></pwm>");
             }
         }
 
@@ -146,7 +163,7 @@ namespace POETerminal1
                 if (Int32.TryParse(textBoxPhase.Text, out MainPhase))
                 {
                     textBoxPhase.Text = (MainPhase + AddPhase).ToString();
-                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\"><phase>" + textBoxPhase.Text + "</phase></pwm>");
+                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\"><phase>" + textBoxPhase.Text + "</phase></pwm>");
                 }
             }
         }
@@ -160,7 +177,7 @@ namespace POETerminal1
                 if (Int32.TryParse(textBoxPhase.Text, out MainPhase))
                 {
                     textBoxPhase.Text = (MainPhase - SubPhase).ToString();
-                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\"><phase>" + textBoxPhase.Text + "</phase></pwm>");
+                    _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\"><phase>" + textBoxPhase.Text + "</phase></pwm>");
                 }
             }
         }
@@ -171,7 +188,7 @@ namespace POETerminal1
             if (Int32.TryParse(textBoxPhase.Text, out MainPhase))
             {
                 textBoxPhase.Text = (MainPhase).ToString();
-                _main.SerialOut("<pwm node=\"" + _node + "\" id=\"1\"><phase>" + textBoxPhase.Text + "</phase></pwm>");
+                _main.SerialOut("<pwm node=\"" + _node + "\" id=\"" + _id + "\"><phase>" + textBoxPhase.Text + "</phase></pwm>");
             }
         }
 

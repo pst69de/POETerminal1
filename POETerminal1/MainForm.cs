@@ -152,13 +152,13 @@ namespace POETerminal1
             }
         }
 
-        public FormPWM FindOrAddPWM(string thisNode)
+        public FormPWM FindOrAddPWM(string thisNode, string thisId)
         {
 
             FormPWM foundPWM = null;
             foreach (FormPWM aPWM in _PWMs)
             {
-                if (aPWM.Node == thisNode)
+                if ((aPWM.Node == thisNode) & (aPWM.Id == thisId))
                 {
                     foundPWM = aPWM;
                 }
@@ -169,6 +169,7 @@ namespace POETerminal1
                 foundPWM = new FormPWM();
                 foundPWM.Main = this;
                 foundPWM.Node = thisNode;
+                foundPWM.Id = thisId;
                 _PWMs.Add(foundPWM);
             }
             foundPWM.Show();
@@ -451,7 +452,7 @@ namespace POETerminal1
                                         }
                                     }
                                 }
-                                FormPWM myPWM = FindOrAddPWM(myNode);
+                                FormPWM myPWM = FindOrAddPWM(myNode, myId);
                                 if (myPWM != null)
                                 {
                                     if (Int32.TryParse(myStrValue, out myIntValue))
